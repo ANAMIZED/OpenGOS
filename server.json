@@ -1,17 +1,17 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.ANAMIZED/opengrants-os",
-  "description": "Autonomous Agentic AI MCP Server for grants discovery, ranking, and lifecycle management optimized for open-source AI and public goods.",
+  "description": "Autonomous Agentic AI MCP Server for grants discovery, ranking, drafting, and public-goods / donation funding. Optimized for open-source AI sustainability.",
   "repository": {
     "url": "https://github.com/ANAMIZED/opengrants-os",
     "source": "github"
   },
-  "version": "0.1.0",
+  "version": "0.2.0",
   "packages": [
     {
       "registryType": "pypi",
       "identifier": "opengrants-os",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "transport": {
         "type": "stdio"
       }
