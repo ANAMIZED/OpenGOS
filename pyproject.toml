@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "opengrants-os"
-version = "0.1.0"
+version = "0.2.0"
 description = "OpenGrants OS — The ultimate open-source Autonomous Agentic AI MCP Server for grants discovery, matching, drafting, and lifecycle management, optimized for open-source AI and public goods."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -22,6 +22,7 @@ keywords = [
     "langgraph",
     "public-goods",
     "open-weight",
+    "donations",
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -55,6 +56,8 @@ dev = [
     "pytest-asyncio>=0.23",
     "ruff>=0.6",
     "mypy>=1.11",
+    "hatch",
+    "twine",
 ]
 
 [project.urls]

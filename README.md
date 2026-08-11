@@ -4,57 +4,30 @@
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![MCP](https://img.shields.io/badge/MCP-Server-purple.svg)](https://modelcontextprotocol.io)
-[![Status](https://img.shields.io/badge/Status-MVP-orange.svg)]()
+[![Version](https://img.shields.io/badge/Version-0.2.0-green.svg)]()
 [![GitHub](https://img.shields.io/badge/GitHub-ANAMIZED%2Fopengrants--os-black.svg)](https://github.com/ANAMIZED/opengrants-os)
 
-> **Vision**: Eliminate the discovery tax that disadvantages open-source AI builders. Provide transparent, grounded, autonomous infrastructure so public-goods work can compete for funding on equal footing with closed labs.
+> **Vision**: Eliminate the discovery tax that disadvantages open-source AI builders. Provide transparent, grounded, autonomous infrastructure so public-goods work can compete for funding on equal footing with closed labs — including traditional grants **and** donation / sponsorship / quadratic public-goods funding.
 
-## Why OpenGrants OS?
+## What’s New in 0.2.0
 
-Most grant tooling is either closed SaaS or fragmented portals. OpenGrants OS is:
-
-- A **first-class MCP Server** that any AI agent (Claude, Cursor, custom agents) can call
-- An **Autonomous multi-agent Operating System** (LangGraph) for continuous discovery → ranking → drafting → red-teaming → lifecycle
-- Explicitly optimized for **open-source AI**, open weights, and public-goods funding
-- Fully open-source (Apache 2.0), self-hostable, and provenance-first
-
-## Current Status — v0.1.0 MVP
-
-**Live now**:
-- Production-ready MCP Server with real Grants.gov integration
-- Tools: `search_grants`, `get_grant_details`, `list_open_source_relevant_grants`
-- Strong provenance on every result
-- Multi-agent LangGraph scaffold ready for expansion
-- Clean packaging and public repository
-
-**Roadmap**:
-- Continuous multi-source corpus (NSF, NIH, Horizon Europe, open-source funds…)
-- Profile steward (GitHub activity + research statements)
-- Full multi-agent ranking, eligibility, open-source alignment scoring
-- Proposal drafting + red-team reviewer agents
-- Lifecycle tracking + human-in-the-loop submission gates
-- Evaluation harness and public benchmarks
+- **Public Goods / Donation sources**: GitHub Sponsors, Open Collective, Gitcoin, Sentient, OpenSSF, NumFOCUS, PSF, and more as first-class funding opportunities
+- **NSF Awards** search
+- **Profile Steward**: create and maintain project/researcher profiles for personalized matching and drafting
+- **Drafting agents**: grounded proposal outlines + short pitches for both grants and donation vehicles
+- Continuous ingestion + evaluation harness (from 0.1.x)
+- Multi-agent ranking with open-source bias
 
 ## Quick Start
 
 ```bash
-# Clone
 git clone https://github.com/ANAMIZED/opengrants-os.git
 cd opengrants-os
-
-# Install (core)
 pip install -e .
-
-# Optional: multi-agent extras
-pip install -e ".[agents]"
-
-# Run as MCP server (stdio)
 python -m opengrants
-# or
-opengrants
 ```
 
-### Connect to Claude Desktop / Cursor / any MCP client
+### MCP Client Config (Claude Desktop / Cursor)
 
 ```json
 {
@@ -72,50 +45,46 @@ opengrants
 
 | Tool | Description |
 |------|-------------|
-| `search_grants` | Keyword search against live Grants.gov public API. Returns normalized opportunities with provenance. |
-| `get_grant_details` | Detailed view of a specific opportunity by ID. |
-| `list_open_source_relevant_grants` | Discovery focused on open-source AI / public-goods relevant funding with lightweight ranking. |
+| `search_grants` | Live Grants.gov keyword search with provenance |
+| `get_grant_details` | Detail view for a specific opportunity |
+| `list_open_source_relevant_grants` | Open-source / AI biased discovery |
+| `list_public_goods_funding` | **Donation, sponsorship, quadratic & open-source funds** |
+| `search_nsf_awards` | NSF Awards public API |
+| `refresh_corpus` | Continuous ingestion into local corpus |
+| `run_evaluation` | Discovery + open-source relevance harness |
+| `upsert_profile` | Create / update a project or researcher profile |
+| `draft_proposal_outline` | Grounded outline + short pitch for grants **or** public-goods funding |
 
 ## Resources
 
-- `opengrants://status` — Version, capabilities, roadmap
-- `opengrants://sources` — Current and planned data sources
+- `opengrants://status`
+- `opengrants://sources`
+
+## Why Donation / Gifting Sources?
+
+Many of the most important open-source AI contributions are funded outside traditional government grants — through GitHub Sponsors, Open Collective, Gitcoin quadratic rounds, foundation open-source programs, and direct public-goods funding. OpenGrants OS treats these as **first-class citizens** alongside Grants.gov and agency programs so that maintainers of public-goods AI can discover and apply for the full spectrum of support.
 
 ## Architecture
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                    MCP Interface                         │
-│         (tools + resources + prompts)                    │
-└──────────────────────┬──────────────────────────────────┘
-                       │
-┌──────────────────────▼──────────────────────────────────┐
-│              OpenGrants OS Core                          │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐  │
-│  │  Discovery  │  │   Ranking   │  │  Drafting +     │  │
-│  │  Agents     │→ │  + Profile   │→ │  Red-Team       │  │
-│  └─────────────┘  │  Matching   │  │  Agents         │  │
-│                   └─────────────┘  └─────────────────┘  │
-│                                                          │
-│  Continuous ingestion · Provenance · HITL gates          │
-└─────────────────────────────────────────────────────────┘
-```
-
-The MCP surface stays stable while the internal multi-agent system evolves.
+MCP Interface → Discovery (Grants.gov + NSF + Public Goods) → Profile Steward → Ranking Agents → Drafting Agents → Evaluation & Corpus
 
 ## Development
 
 ```bash
 pip install -e ".[dev,agents]"
 ruff check .
-pytest
+python -m opengrants.evaluation.harness
 ```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+## Publishing
+
+- **PyPI**: Package is ready (`hatchling`). Publish with `hatch build && twine upload dist/*` once credentials are available.
+- **Official MCP Registry**: `server.json` is present. Use `mcp-publisher login github && mcp-publisher publish`.
+- **Glama**: `glama.json` is present; claim the listing after indexing.
 
 ## License
 
-Apache License 2.0 — see [LICENSE](LICENSE).
+Apache License 2.0
 
 ---
 
