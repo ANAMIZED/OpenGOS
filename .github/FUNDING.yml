@@ -1,0 +1,10 @@
+# These are supported funding model platforms
+# Enable GitHub Sponsors on the ANAMIZED account (or transfer repo to an org),
+# then the github: entry will activate the Sponsor button.
+# Create an Open Collective at https://opencollective.com and update the slug below.
+
+github: [ANAMIZED]
+open_collective: # replace with your collective slug once created, e.g. opengrants-os
+custom:
+  - "https://github.com/ANAMIZED/opengrants-os"
+  # Add Open Collective, Liberapay, Ko-fi, or other links here once ready
