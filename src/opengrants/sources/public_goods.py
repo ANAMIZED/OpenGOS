@@ -119,6 +119,36 @@ class PublicGoodsFundingClient:
             "focus_areas": ["open-source", "public-interest", "privacy", "open-web"],
             "open_source_preferred": True,
         },
+        {
+            "id": "sovereign-tech-fund",
+            "title": "Sovereign Tech Fund / related public digital infrastructure funds",
+            "organization": "Sovereign Tech Agency (and similar public digital infrastructure funds)",
+            "type": "grant",
+            "description": "Public funding for open digital infrastructure and critical open-source components that underpin modern software and AI systems.",
+            "url": "https://www.sovereign.tech",
+            "focus_areas": ["open-source", "digital-infrastructure", "public-goods", "security"],
+            "open_source_preferred": True,
+        },
+        {
+            "id": "nlnet",
+            "title": "NLnet Foundation / NGI Zero",
+            "organization": "NLnet Foundation",
+            "type": "grant",
+            "description": "European funding for open-source, open internet, privacy, and public-interest technology projects.",
+            "url": "https://nlnet.nl",
+            "focus_areas": ["open-source", "privacy", "open-internet", "public-interest", "europe"],
+            "open_source_preferred": True,
+        },
+        {
+            "id": "prototype-fund",
+            "title": "Prototype Fund",
+            "organization": "Open Knowledge Foundation Germany / BMBF",
+            "type": "grant",
+            "description": "Funding for open-source prototypes and public-interest software from individuals and small teams in Germany/Europe.",
+            "url": "https://prototypefund.de",
+            "focus_areas": ["open-source", "public-interest", "prototyping", "europe"],
+            "open_source_preferred": True,
+        },
     ]
 
     def list_opportunities(
