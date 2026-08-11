@@ -186,6 +186,30 @@ async def list_open_source_relevant_grants(
     )
 
 
+@mcp.tool
+async def refresh_corpus(keywords: str = "artificial intelligence,open source,machine learning") -> str:
+    """
+    Trigger a continuous-ingestion style refresh of the local grant corpus
+    using the provided comma-separated keywords. Returns stats.
+    """
+    from opengrants.ingestion.corpus import CorpusManager
+    mgr = CorpusManager()
+    kws = [k.strip() for k in keywords.split(",") if k.strip()]
+    added = await mgr.refresh(keywords=kws)
+    stats = mgr.stats()
+    return json.dumps({"added": added, "corpus_stats": stats}, indent=2)
+
+
+@mcp.tool
+async def run_evaluation() -> str:
+    """
+    Run the basic OpenGrants evaluation harness (discovery health + open-source hit rate).
+    """
+    from opengrants.evaluation.harness import run_basic_evaluation
+    result = await run_basic_evaluation()
+    return json.dumps(result, indent=2)
+
+
 @mcp.resource("opengrants://status")
 def server_status() -> str:
     """Current status, version, and capabilities of this OpenGrants OS instance."""
@@ -193,20 +217,22 @@ def server_status() -> str:
         {
             "name": "OpenGrants OS",
             "version": "0.1.0",
-            "status": "MVP — Discovery layer live + multi-agent scaffolding",
+            "status": "MVP — Discovery + ingestion + evaluation + multi-agent ranking live",
             "mcp_tools": [
                 "search_grants",
                 "get_grant_details",
                 "list_open_source_relevant_grants",
+                "refresh_corpus",
+                "run_evaluation",
             ],
             "resources": ["opengrants://status", "opengrants://sources"],
             "roadmap": [
-                "Continuous autonomous multi-source ingestion",
+                "Additional data sources (NSF, NIH, Horizon Europe, open-source funds)",
                 "Profile steward (GitHub + research statements)",
-                "Multi-agent ranking + eligibility + open-source alignment",
+                "Full multi-agent ranking + eligibility + open-source alignment",
                 "Proposal drafting + red-team reviewer agents",
                 "Full lifecycle tracking with HITL submission gates",
-                "Evaluation harness and public benchmarks",
+                "Richer evaluation harness and public benchmarks",
             ],
             "philosophy": (
                 "Public-good first. Strong provenance. Autonomy with guardrails. "
