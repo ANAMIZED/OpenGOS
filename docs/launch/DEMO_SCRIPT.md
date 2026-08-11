@@ -1,30 +1,36 @@
 # OpenGrants OS — 60–90 Second Demo Script
 
-**Goal**: Show an agent using OpenGrants to discover public-goods funding and draft a pitch in under 90 seconds.
+**Goal**: Show the interactive shell and Constellation so viewers grasp the full system in under 90 seconds.
 
 ## Suggested Recording Flow (screen + voice)
 
-1. **0–10s** — Title card / terminal  
-   “OpenGrants OS — the open-source MCP server that treats grants *and* donations as first-class funding.”
+1. **0–8s** — Open the live demo  
+   URL: https://anamized.github.io/opengrants-os/  
+   Title card / status bar: “OpenGrants OS — public-goods funding shell”
 
-2. **10–25s** — Start the server  
-   ```bash
-   python -m opengrants
-   ```
-   Show it connecting in Claude Desktop or Cursor.
+2. **8–25s** — Home → Constellation  
+   Tap the wide **Constellation** tile.  
+   Voice: “The whole system as stars. Everything links back to the center.”  
+   Slowly rotate the graph. Hover/tap the gold super-star (OpenGrants OS).
 
-3. **25–45s** — Call `list_public_goods_funding`  
-   Prompt the agent:  
-   “Use OpenGrants to list public-goods and donation funding sources relevant to open-source AI.”
+3. **25–45s** — Explore the graph  
+   Tap a pillar (e.g. Ranking Agents), then a tool star, then an opportunity.  
+   Show the wiki-style note with backlinks.  
+   Voice: “Every grant, every MCP tool, every source — one constellation.”
 
-4. **45–70s** — Create a profile + draft  
-   “Create a profile for my open-source AI project and draft a short pitch for GitHub Sponsors / Open Collective.”
+4. **45–70s** — Discover + Draft  
+   Switch to Discover, filter by Public goods, open a slip, Track it.  
+   Go to Draft and insert a starter section.  
+   Voice: “Profile-aware ranking and grounded drafting — for grants and sponsorships alike.”
 
-5. **70–90s** — Close  
-   “OpenGrants eliminates the discovery tax. Fully open-source. Dogfooding itself.  
+5. **70–90s** — Close on Console or Home  
+   Optional: one Console command (`list_public_goods_funding`).  
+   End on the Constellation or the repo link.  
+   “OpenGrants eliminates the discovery tax. Fully open-source.  
    github.com/ANAMIZED/opengrants-os”
 
 ## Key talking points
 - Traditional grants **and** sponsorships / quadratic funding in one place
-- Works with any MCP client
+- 3D knowledge graph of the entire system
+- Works offline as a single HTML file; real MCP server is available too
 - Built for open-source AI maintainers
