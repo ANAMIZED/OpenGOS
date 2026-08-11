@@ -1,0 +1,84 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "opengrants-os"
+version = "0.1.0"
+description = "OpenGrants OS — The ultimate open-source Autonomous Agentic AI MCP Server for grants discovery, matching, drafting, and lifecycle management, optimized for open-source AI and public goods."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+authors = [
+    { name = "OpenGrants Community", email = "opengrants@example.com" }
+]
+keywords = [
+    "mcp",
+    "grants",
+    "ai",
+    "agentic",
+    "open-source",
+    "funding",
+    "langgraph",
+    "public-goods",
+    "open-weight",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Office/Business :: Financial",
+]
+
+dependencies = [
+    "fastmcp>=2.0.0",
+    "httpx>=0.27.0",
+    "pydantic>=2.0",
+    "pydantic-settings>=2.0",
+    "python-dotenv>=1.0",
+    "rich>=13.0",
+]
+
+[project.optional-dependencies]
+agents = [
+    "langgraph>=0.2.0",
+    "langchain-core>=0.3.0",
+    "langchain-mcp-adapters>=0.1.0",
+]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "ruff>=0.6",
+    "mypy>=1.11",
+]
+
+[project.urls]
+Homepage = "https://github.com/ANAMIZED/opengrants-os"
+Repository = "https://github.com/ANAMIZED/opengrants-os"
+Issues = "https://github.com/ANAMIZED/opengrants-os/issues"
+
+[project.scripts]
+opengrants = "opengrants.server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/opengrants"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src",
+    "/README.md",
+    "/LICENSE",
+    "/pyproject.toml",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
