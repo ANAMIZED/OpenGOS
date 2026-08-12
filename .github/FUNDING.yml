@@ -1,10 +1,10 @@
-# These are supported funding model platforms.
-# 1. Enable GitHub Sponsors on the ANAMIZED account (or move repo to an org).
-# 2. Create an Open Collective at https://opencollective.com/create
-# 3. Replace the open_collective value with your collective slug.
+# OpenGOS funding platforms (shown on the repo "Sponsor" button)
+# 1. Enable GitHub Sponsors on the ANAMIZED account (or an org that owns the repo).
+# 2. Create an Open Collective: https://opencollective.com/create
+# 3. Uncomment open_collective and set your real collective slug.
 
 github: [ANAMIZED]
-# open_collective: opengrants-os   # uncomment and set once the collective exists
+# open_collective: opengos
 custom:
-  - "https://github.com/ANAMIZED/opengrants-os"
-  # - "https://opencollective.com/opengrants-os"
+  - "https://github.com/ANAMIZED/OpenGOS"
+  # - "https://opencollective.com/opengos"

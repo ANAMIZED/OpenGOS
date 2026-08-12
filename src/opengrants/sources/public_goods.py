@@ -1,10 +1,9 @@
 """
 Public Goods / Donation & Gifting funding sources.
 
-This module surfaces non-traditional funding for open-source public goods:
-GitHub Sponsors style programs, Open Collective, Gitcoin, foundation open-source funds,
-and community donation opportunities. These are first-class citizens in OpenGrants OS
-because many of the most important open-source AI contributions are funded this way.
+Surfaces non-traditional funding for open-source public goods:
+GitHub Sponsors, Open Collective, Gitcoin, foundation open-source funds,
+and community donation vehicles. First-class citizens in OpenGOS.
 """
 
 from __future__ import annotations
@@ -31,144 +30,128 @@ class PublicGoodsOpportunity(BaseModel):
 
 
 class PublicGoodsFundingClient:
-    """
-    Curated + extensible catalog of public-goods / donation funding sources
-    relevant to open-source AI and public-interest technology.
-    """
+    """Curated catalog of public-goods / donation funding sources."""
 
     CATALOG: list[dict[str, Any]] = [
         {
-            "id": "github-sponsors",
+            "id": "pg-github-sponsors",
             "title": "GitHub Sponsors",
             "organization": "GitHub",
             "type": "sponsorship",
-            "description": "Direct sponsorship of open-source maintainers and projects via GitHub.",
+            "description": "Recurring and one-time sponsorships to maintainers and organizations.",
             "url": "https://github.com/sponsors",
-            "focus_areas": ["open-source", "maintainers", "ai", "developer-tools"],
+            "focus_areas": ["open-source", "maintainers", "community"],
             "open_source_preferred": True,
-            "notes": "Best for individual maintainers and small projects with existing GitHub presence.",
+            "notes": "Enable Sponsors on the account or org; FUNDING.yml surfaces the button.",
         },
         {
-            "id": "open-collective",
-            "title": "Open Collective",
+            "id": "pg-open-collective",
+            "title": "Open Collective / Open Source Collective",
             "organization": "Open Collective",
             "type": "collective",
-            "description": "Transparent collectives for open-source projects and public-goods communities. Supports recurring donations and fiscal hosting.",
+            "description": "Transparent fiscal hosting so projects can accept donations and pay contributors.",
             "url": "https://opencollective.com",
-            "focus_areas": ["open-source", "public-goods", "communities", "fiscal-hosting"],
+            "focus_areas": ["open-source", "community", "fiscal-host"],
             "open_source_preferred": True,
+            "notes": "Prefer OSC or another active fiscal host; set open_collective slug in FUNDING.yml.",
         },
         {
-            "id": "gitcoin",
-            "title": "Gitcoin Grants / Allo",
+            "id": "pg-gitcoin",
+            "title": "Gitcoin Grants",
             "organization": "Gitcoin",
             "type": "quadratic",
-            "description": "Quadratic funding rounds and Allo protocol for public goods, including open-source and public-interest technology.",
-            "url": "https://gitcoin.co",
-            "focus_areas": ["public-goods", "open-source", "web3", "climate", "ai-ethics"],
+            "description": "Quadratic and multi-mechanism funding rounds for public goods.",
+            "url": "https://www.gitcoin.co",
+            "focus_areas": ["open-source", "web3", "public-goods"],
             "open_source_preferred": True,
-            "notes": "Strong fit for public-goods AI and open-source infrastructure.",
         },
         {
-            "id": "sentient-foundation",
-            "title": "Sentient Foundation AGI Grants",
-            "organization": "Sentient Foundation",
+            "id": "pg-nlnet",
+            "title": "NLnet / Open Internet programmes",
+            "organization": "NLnet Foundation",
             "type": "grant",
-            "description": "Grants focused on open AGI research and open-source AI systems.",
-            "url": "https://sentient.foundation",
-            "focus_areas": ["open-agi", "open-source-ai", "research"],
+            "description": "Small-to-medium grants for open internet and digital commons technology.",
+            "url": "https://nlnet.nl/propose/",
+            "focus_areas": ["open-source", "internet", "privacy", "commons"],
             "open_source_preferred": True,
+            "notes": "Call windows change; verify open topics on nlnet.nl.",
         },
         {
-            "id": "openssf",
-            "title": "OpenSSF / Linux Foundation Security Grants",
-            "organization": "Open Source Security Foundation (Linux Foundation)",
+            "id": "pg-sovereign-tech",
+            "title": "Sovereign Tech Agency Fund",
+            "organization": "Sovereign Tech Agency",
             "type": "grant",
-            "description": "Funding for open-source security improvements, critical infrastructure, and secure software supply chain work.",
-            "url": "https://openssf.org",
-            "focus_areas": ["open-source-security", "supply-chain", "critical-infrastructure"],
+            "description": "Investment in critical open-source infrastructure and resilience.",
+            "url": "https://www.sovereign.tech/",
+            "focus_areas": ["open-source", "infrastructure", "security"],
             "open_source_preferred": True,
         },
         {
-            "id": "numfocus",
+            "id": "pg-prototype-fund",
+            "title": "Prototype Fund",
+            "organization": "Prototype Fund / BMBF",
+            "type": "grant",
+            "description": "Public-interest tech prototypes released as open source (Germany-focused).",
+            "url": "https://prototypefund.de",
+            "focus_areas": ["open-source", "public-interest", "security"],
+            "open_source_preferred": True,
+        },
+        {
+            "id": "pg-openssf",
+            "title": "OpenSSF / Alpha-Omega",
+            "organization": "Open Source Security Foundation",
+            "type": "grant",
+            "description": "Security investment and engagements for critical open-source projects.",
+            "url": "https://openssf.org/",
+            "focus_areas": ["open-source", "security", "infrastructure"],
+            "open_source_preferred": True,
+            "notes": "Often proactive/invited; still relevant for critical projects.",
+        },
+        {
+            "id": "pg-numfocus",
             "title": "NumFOCUS Small Development Grants",
             "organization": "NumFOCUS",
             "type": "grant",
-            "description": "Support for open-source scientific computing projects (many of which underpin AI research).",
-            "url": "https://numfocus.org",
-            "focus_areas": ["scientific-computing", "open-source", "data-science", "ai-tooling"],
+            "description": "Small grants for open-source scientific computing projects.",
+            "url": "https://numfocus.org/",
+            "focus_areas": ["open-source", "science", "python"],
             "open_source_preferred": True,
         },
         {
-            "id": "psf",
+            "id": "pg-psf",
             "title": "Python Software Foundation Grants",
             "organization": "Python Software Foundation",
             "type": "grant",
-            "description": "Grants supporting the Python ecosystem, including AI/ML libraries and community work.",
+            "description": "Support for Python community and open-source initiatives.",
             "url": "https://www.python.org/psf/grants/",
-            "focus_areas": ["python", "open-source", "education", "community"],
+            "focus_areas": ["open-source", "python", "community"],
             "open_source_preferred": True,
-        },
-        {
-            "id": "mozilla-open-source",
-            "title": "Mozilla Open Source Support (MOSS) / related programs",
-            "organization": "Mozilla",
-            "type": "grant",
-            "description": "Historic and ongoing support for open-source projects aligned with open internet and public-interest technology.",
-            "url": "https://www.mozilla.org",
-            "focus_areas": ["open-source", "public-interest", "privacy", "open-web"],
-            "open_source_preferred": True,
-        },
-        {
-            "id": "sovereign-tech-fund",
-            "title": "Sovereign Tech Fund / related public digital infrastructure funds",
-            "organization": "Sovereign Tech Agency (and similar public digital infrastructure funds)",
-            "type": "grant",
-            "description": "Public funding for open digital infrastructure and critical open-source components that underpin modern software and AI systems.",
-            "url": "https://www.sovereign.tech",
-            "focus_areas": ["open-source", "digital-infrastructure", "public-goods", "security"],
-            "open_source_preferred": True,
-        },
-        {
-            "id": "nlnet",
-            "title": "NLnet Foundation / NGI Zero",
-            "organization": "NLnet Foundation",
-            "type": "grant",
-            "description": "European funding for open-source, open internet, privacy, and public-interest technology projects.",
-            "url": "https://nlnet.nl",
-            "focus_areas": ["open-source", "privacy", "open-internet", "public-interest", "europe"],
-            "open_source_preferred": True,
-        },
-        {
-            "id": "prototype-fund",
-            "title": "Prototype Fund",
-            "organization": "Open Knowledge Foundation Germany / BMBF",
-            "type": "grant",
-            "description": "Funding for open-source prototypes and public-interest software from individuals and small teams in Germany/Europe.",
-            "url": "https://prototypefund.de",
-            "focus_areas": ["open-source", "public-interest", "prototyping", "europe"],
-            "open_source_preferred": True,
+            "notes": "Program scope and windows vary by year; verify current call.",
         },
     ]
 
-    def list_opportunities(
-        self,
-        focus: str | None = None,
-        type_filter: str | None = None,
-    ) -> list[PublicGoodsOpportunity]:
-        results = []
+    def list_all(self) -> list[PublicGoodsOpportunity]:
+        now = datetime.now(timezone.utc).isoformat()
+        out: list[PublicGoodsOpportunity] = []
         for item in self.CATALOG:
-            if type_filter and item["type"] != type_filter:
-                continue
-            if focus:
-                text = f"{item['title']} {item.get('description','')} {' '.join(item.get('focus_areas', []))}".lower()
-                if focus.lower() not in text:
-                    continue
-            results.append(PublicGoodsOpportunity(**item))
-        return results
+            out.append(
+                PublicGoodsOpportunity(
+                    id=item["id"],
+                    title=item["title"],
+                    organization=item["organization"],
+                    type=item["type"],
+                    description=item.get("description"),
+                    url=item.get("url"),
+                    focus_areas=list(item.get("focus_areas") or []),
+                    open_source_preferred=bool(item.get("open_source_preferred", True)),
+                    retrieved_at=now,
+                    notes=item.get("notes"),
+                )
+            )
+        return out
 
-    def get_by_id(self, opportunity_id: str) -> PublicGoodsOpportunity | None:
-        for item in self.CATALOG:
-            if item["id"] == opportunity_id:
-                return PublicGoodsOpportunity(**item)
-        return None
+
+def list_catalog() -> list[dict[str, Any]]:
+    """Return serializable public-goods catalog for MCP tools."""
+    client = PublicGoodsFundingClient()
+    return [o.model_dump() for o in client.list_all()]
