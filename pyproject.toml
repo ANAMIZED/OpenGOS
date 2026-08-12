@@ -57,9 +57,9 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/ANAMIZED/opengrants-os"
-Repository = "https://github.com/ANAMIZED/opengrants-os"
-Issues = "https://github.com/ANAMIZED/opengrants-os/issues"
+Homepage = "https://github.com/ANAMIZED/opengos"
+Repository = "https://github.com/ANAMIZED/opengos"
+Issues = "https://github.com/ANAMIZED/opengos/issues"
 
 [project.scripts]
 opengos = "opengrants.server:main"

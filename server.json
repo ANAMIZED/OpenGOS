@@ -3,7 +3,7 @@
   "name": "io.github.ANAMIZED/opengos",
   "description": "OpenGOS — Autonomous Agentic AI MCP Server for grants discovery, ranking, drafting, and public-goods / donation funding. Open-source first.",
   "repository": {
-    "url": "https://github.com/ANAMIZED/opengrants-os",
+    "url": "https://github.com/ANAMIZED/opengos",
     "source": "github"
   },
   "version": "0.2.1",
