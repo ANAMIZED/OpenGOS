@@ -2,10 +2,15 @@
 
 **Goal**: Show the interactive shell and Constellation so viewers grasp the full system in under 90 seconds.
 
+## Live demo URLs
+
+- **Primary (works now):** https://htmlpreview.github.io/?https://github.com/ANAMIZED/opengrants-os/blob/main/opengrants-os-1.html
+- **After Pages is enabled:** https://anamized.github.io/opengrants-os/
+- **Local:** open `opengrants-os-1.html` in a browser
+
 ## Suggested Recording Flow (screen + voice)
 
 1. **0–8s** — Open the live demo  
-   URL: https://anamized.github.io/opengrants-os/  
    Title card / status bar: “OpenGrants OS — public-goods funding shell”
 
 2. **8–25s** — Home → Constellation  

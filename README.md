@@ -11,11 +11,11 @@
 
 ## Try it now
 
-**[Launch the interactive shell →](https://anamized.github.io/opengrants-os/)**
+**[Launch the interactive shell →](https://htmlpreview.github.io/?https://github.com/ANAMIZED/opengrants-os/blob/main/opengrants-os-1.html)**
 
 A complete, offline-capable demo: Discover, Constellation (3D knowledge graph), Pipeline, Draft, Console, and Profile — all in one page. No install required.
 
-Or open the file directly: [`demo/index.html`](demo/index.html)
+Source file: [`opengrants-os-1.html`](opengrants-os-1.html) (download and open locally for the fullest offline experience).
 
 ## Why OpenGrants OS?
 
@@ -111,7 +111,7 @@ python -m opengrants.evaluation.harness
 - Official MCP Registry: `server.json` present → `mcp-publisher publish`
 - Glama: `glama.json` present
 - PyPI: ready (`hatch build && twine upload dist/*`)
-- Demo: GitHub Pages from `/demo`
+- Interactive demo: [`opengrants-os-1.html`](opengrants-os-1.html)
 
 ## License
 
