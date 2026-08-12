@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "opengos"
-version = "0.2.1"
-description = "OpenGOS — Autonomous Agentic AI MCP Server for grants discovery, ranking, drafting, and public-goods funding (open-source first)."
+version = "0.3.0"
+description = "OpenGOS — Autonomous Agentic AI MCP Server for grants discovery, ranking, drafting, and public-goods funding."
 readme = "README.md"
 requires-python = ">=3.11"
 license = "Apache-2.0"
@@ -13,15 +13,8 @@ authors = [
     { name = "OpenGOS Community", email = "opengos@example.com" }
 ]
 keywords = [
-    "mcp",
-    "grants",
-    "ai",
-    "agentic",
-    "open-source",
-    "funding",
-    "public-goods",
-    "donations",
-    "opengos",
+    "mcp", "grants", "ai", "agentic", "open-source", "funding",
+    "public-goods", "donations", "opengos",
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -44,26 +37,16 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-agents = [
-    "langgraph>=0.2.0",
-    "langchain-core>=0.3.0",
-]
-dev = [
-    "pytest>=8.0",
-    "pytest-asyncio>=0.23",
-    "ruff>=0.6",
-    "build",
-    "twine",
-]
+agents = ["langgraph>=0.2.0", "langchain-core>=0.3.0"]
+dev = ["pytest>=8.0", "pytest-asyncio>=0.23", "ruff>=0.6", "build", "twine"]
 
 [project.urls]
-Homepage = "https://github.com/ANAMIZED/opengos"
-Repository = "https://github.com/ANAMIZED/opengos"
-Issues = "https://github.com/ANAMIZED/opengos/issues"
+Homepage = "https://github.com/ANAMIZED/OpenGOS"
+Repository = "https://github.com/ANAMIZED/OpenGOS"
+Issues = "https://github.com/ANAMIZED/OpenGOS/issues"
 
 [project.scripts]
 opengos = "opengrants.server:main"
-opengrants = "opengrants.server:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/opengrants"]
@@ -72,12 +55,7 @@ packages = ["src/opengrants"]
 "src" = ""
 
 [tool.hatch.build.targets.sdist]
-include = [
-    "/src",
-    "/README.md",
-    "/LICENSE",
-    "/pyproject.toml",
-]
+include = ["/src", "/README.md", "/LICENSE", "/pyproject.toml"]
 
 [tool.ruff]
 line-length = 100

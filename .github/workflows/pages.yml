@@ -4,8 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'opengrants-os-1.html'
-      - 'demo/**'
+      - 'opengos.html'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
@@ -29,20 +28,10 @@ jobs:
       - name: Prepare site
         run: |
           mkdir -p _site
-          # Prefer the full uploaded shell; fall back to demo/
-          if [ -f opengrants-os-1.html ]; then
-            cp opengrants-os-1.html _site/index.html
-          elif [ -f demo/index.html ]; then
-            cp demo/index.html _site/index.html
-          else
-            echo "No demo HTML found" && exit 1
-          fi
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+          cp opengos.html _site/index.html
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - id: deployment
         uses: actions/deploy-pages@v4

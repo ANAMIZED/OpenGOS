@@ -2,36 +2,31 @@
 
 **Open-source Autonomous Agentic AI MCP Server for grants, public-goods funding, and open-source sustainability.**
 
-Formerly referred to in early drafts as “OpenGrants OS.” Product name is now **OpenGOS** to avoid confusion with the commercial OpenGrants (opengrants.io) brand.
-
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![MCP](https://img.shields.io/badge/MCP-Server-purple.svg)](https://modelcontextprotocol.io)
-[![Version](https://img.shields.io/badge/Version-0.2.1-green.svg)]()
-[![GitHub](https://img.shields.io/badge/GitHub-ANAMIZED%2Fopengrants--os-black.svg)](https://github.com/ANAMIZED/opengrants-os)
+[![Version](https://img.shields.io/badge/Version-0.3-green.svg)]()
+[![GitHub](https://img.shields.io/badge/GitHub-ANAMIZED%2FOpenGOS-black.svg)](https://github.com/ANAMIZED/OpenGOS)
 
 > Eliminate the discovery tax. Treat traditional grants **and** donations / sponsorships / quadratic funding as equal first-class citizens so open-source projects can compete on a level playing field.
 
 ## Try it now
 
-**[Launch the interactive shell →](https://htmlpreview.github.io/?https://github.com/ANAMIZED/opengrants-os/blob/main/opengrants-os-1.html)**
+**[Launch the interactive shell →](https://htmlpreview.github.io/?https://github.com/ANAMIZED/OpenGOS/blob/main/opengos.html)**
 
-A complete demo: Discover, Constellation (3D knowledge graph), Pipeline, Draft, Console, and Profile — one HTML file. No install required.
+Discover · Constellation (3D knowledge graph) · Pipeline · Draft · Console · Profile — one HTML file. No install required.
 
-Source: [`opengrants-os-1.html`](opengrants-os-1.html) (download for offline use; fonts load from Google when online).
+Source: [`opengos.html`](opengos.html)
 
 Catalog baseline: **August 2026** (illustrative — always verify with the funder).
 
 ## Why OpenGOS?
 
-Most funding tools are closed SaaS or fragmented portals. OpenGOS is:
-
 - A **first-class MCP Server** any agent (Claude, Cursor, custom agents) can call
-- An **autonomous multi-agent system** for discovery → ranking → drafting → evaluation
-- Explicitly optimized for **open-source**, open weights, and **public-goods funding**
-- Fully open-source (Apache 2.0), self-hostable, and provenance-first
-- Dogfooding itself (see `docs/DOGFOODING_OPENGRANTS.md`)
+- Discovery → ranking → drafting → evaluation with a **declared open-source bias**
+- **Public-goods funding** (sponsors, collectives, quadratic) as first-class citizens
+- Apache 2.0, self-hostable, provenance-first
 
-## Features (v0.2.1)
+## Features (v0.3)
 
 | Capability | Status |
 |------------|--------|
@@ -47,10 +42,10 @@ Most funding tools are closed SaaS or fragmented portals. OpenGOS is:
 ## Quick Start (MCP Server)
 
 ```bash
-git clone https://github.com/ANAMIZED/opengrants-os.git
-cd opengrants-os
+git clone https://github.com/ANAMIZED/OpenGOS.git
+cd OpenGOS
 pip install -e .
-opengos          # or: python -m opengrants
+opengos
 ```
 
 ### MCP Client Config
@@ -66,7 +61,7 @@ opengos          # or: python -m opengrants
 }
 ```
 
-Or:
+Or via module:
 
 ```json
 {
@@ -74,7 +69,7 @@ Or:
     "opengos": {
       "command": "python",
       "args": ["-m", "opengrants"],
-      "cwd": "/absolute/path/to/opengrants-os"
+      "cwd": "/absolute/path/to/OpenGOS"
     }
   }
 }
@@ -92,7 +87,7 @@ Or:
 | `refresh_corpus` | Continuous ingestion into local corpus |
 | `run_evaluation` | Discovery + open-source relevance harness |
 | `upsert_profile` | Create / update project profile |
-| `draft_proposal_outline` | Grounded outline (grants **and** public-goods vehicles) |
+| `draft_proposal_outline` | Grounded outline (grants and public-goods vehicles) |
 
 ## Architecture
 
@@ -108,16 +103,15 @@ Evaluation & Continuous Corpus
 
 ## Support
 
-- GitHub Sponsors (enable on the account)
-- Open Collective (create a collective; update `.github/FUNDING.yml`)
-- See `docs/DOGFOODING_OPENGRANTS.md`
+- GitHub Sponsors
+- Open Collective (update `.github/FUNDING.yml` with your slug)
+- See `docs/DOGFOODING.md`
 
 ## Publishing
 
-- PyPI package name: **`opengos`**
-- Official MCP Registry: `server.json` → `io.github.ANAMIZED/opengos`
+- PyPI: **`opengos`**
+- MCP Registry: `io.github.ANAMIZED/opengos`
 - Glama: `glama.json`
-- GitHub repo path remains `ANAMIZED/opengrants-os` for continuity
 
 ## License
 
@@ -125,5 +119,4 @@ Apache License 2.0 — see [LICENSE](LICENSE).
 
 ---
 
-**Built for the open-source community.**  
-https://github.com/ANAMIZED/opengrants-os
+https://github.com/ANAMIZED/OpenGOS
