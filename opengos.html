@@ -4,11 +4,1099 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>OpenGOS</title>
-<meta name="description" content="OpenGOS — a self-contained interactive shell for grants and public-goods funding: discover, rank, track, and draft. Single-file build for github.com/ANAMIZED/OpenGOS">
+<meta name="description" content="OpenGOS — a self-contained interactive shell for grants and public-goods funding: discover, rank, track, and draft. Single-file build inspired by github.com/ANAMIZED/opengrants-os">
 <meta name="theme-color" content="#0F1912">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,900&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── OpenGOS · banknote shell + ledger paper ─────────────────── */
+:root{
+  --ink:#0F1912;          /* banknote green-black shell */
+  --shell2:#16241B;       /* raised shell surface */
+  --shell3:#0B120D;       /* console well */
+  --line:#25392C;
+  --text:#E7EEE4;
+  --dim:#8FA394;
+  --paper:#F3EDDC;        /* ledger cream */
+  --paper2:#EAE2CC;
+  --tear:#C9BFA3;
+  --pink:#20301F;         /* ink on paper */
+  --pdim:#5C6B5C;
+  --seal:#2E7D4F;         /* treasury green */
+  --seal2:#3B9663;
+  --foil:#B99334;         /* awarded gold */
+  --stampr:#B3402E;       /* deadline stamp red */
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --disp:"Fraunces",Georgia,"Times New Roman",serif;
+  --sat:env(safe-area-inset-top,0px);
+  --sab:env(safe-area-inset-bottom,0px);
+  --r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--ink);
+  background-image:radial-gradient(120% 60% at 50% -10%, #17281C 0%, var(--ink) 55%);
+  color:var(--text);font:400 15px/1.5 var(--sans);
+  min-height:100dvh;overscroll-behavior-y:none;
+}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+input,select,textarea{font:inherit;color:inherit}
+a{color:var(--seal2)}
+svg{display:block}
+:focus-visible{outline:2px solid var(--seal2);outline-offset:2px;border-radius:6px}
+
+/* status bar */
+.statusbar{position:fixed;inset:0 0 auto 0;z-index:40;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:calc(var(--sat) + 8px) 14px 8px;
+  background:rgba(15,25,18,.82);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+  font:500 11px/1 var(--mono);letter-spacing:.08em;color:var(--dim)}
+.statusbar b{color:var(--text);font-weight:600;letter-spacing:.16em}
+.dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--seal2);margin-right:6px;vertical-align:1px}
+
+/* layout */
+main{max-width:640px;margin:0 auto;padding:calc(var(--sat) + 56px) 16px calc(var(--sab) + 92px)}
+.view{display:none}
+.view.on{display:block;animation:vfade .22s ease}
+@keyframes vfade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.eyebrow{font:600 10.5px var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--dim)}
+h1.vh{font:900 27px/1.15 var(--disp);letter-spacing:-.01em;color:#F0EAD6;margin:4px 0 14px}
+.sub{color:var(--dim);font-size:13.5px;margin:-8px 0 14px}
+.gap{height:16px}
+
+/* ledger strip */
+.ledger{display:flex;background:var(--shell2);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-bottom:16px}
+.cell{flex:1;padding:12px 6px;text-align:center;border-left:1px solid var(--line)}
+.cell:first-child{border-left:0}
+.cell .n{font:600 19px var(--mono);color:#EFE8D2}
+.cell .l{font:600 9.5px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-top:3px}
+
+/* app grid */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tile{background:var(--shell2);border:1px solid var(--line);border-radius:16px;
+  padding:15px 6px 12px;display:grid;justify-items:center;gap:8px;color:var(--text)}
+.tile svg{width:25px;height:25px;stroke:#9FD1AE;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.tile span{font:600 12px var(--sans);color:#D7E2D4}
+.tile:active{background:#1B2C21}
+
+/* chips */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;border:1px solid var(--line);background:var(--shell2);color:#CFE0D2;
+  border-radius:999px;padding:8px 13px;font:600 12.5px var(--sans)}
+.chip.on{background:var(--seal);border-color:var(--seal);color:#F3EDDC}
+.chip .ct{font-family:var(--mono);font-size:11px;opacity:.75;margin-left:4px}
+
+/* search / fields */
+.search{width:100%;background:var(--shell2);border:1px solid var(--line);border-radius:12px;
+  padding:12px 14px;color:var(--text);margin-bottom:10px}
+.search::placeholder{color:var(--dim)}
+.row2{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+select.sel{background:var(--shell2);border:1px solid var(--line);border-radius:10px;padding:9px 10px;color:var(--text);font-size:13px}
+label.fl{display:block;font:600 10.5px var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin:14px 0 6px}
+input.fi{width:100%;background:var(--shell2);border:1px solid var(--line);border-radius:10px;padding:11px 12px;color:var(--text)}
+
+/* the slip — signature element */
+.slip{position:relative;background:linear-gradient(105deg,var(--paper2) 0 18px,var(--paper) 18px);
+  color:var(--pink);border-radius:12px;padding:13px 14px 12px 30px;margin-bottom:12px;
+  box-shadow:0 1px 0 rgba(0,0,0,.35),0 6px 18px rgba(0,0,0,.28);text-align:left;width:100%}
+.slip::before{content:"";position:absolute;left:17px;top:9px;bottom:9px;border-left:2px dashed var(--tear)}
+.slip .ser{font:500 10.5px var(--mono);letter-spacing:.16em;color:var(--pdim)}
+.slip h3{font:600 18px/1.28 var(--disp);letter-spacing:-.005em;margin:3px 44px 5px 0;color:#1B2A1E}
+.slip .meta{display:flex;flex-wrap:wrap;gap:5px 10px;align-items:baseline;font-size:12.5px;color:#4A5A4B}
+.slip .amt{font:600 13px var(--mono);color:#274B33;white-space:nowrap}
+.slip .due{font:600 11px var(--mono);letter-spacing:.04em}
+.due.soon{color:var(--stampr)}
+.due.roll{color:#4A5A4B}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.tg{font:600 10px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#54654F;
+  border:1px solid #CFC5A6;border-radius:6px;padding:2.5px 6px;background:#EFE8D2}
+.tg.src{color:#2E5B41;border-color:#B9CDB6;background:#E4EBDD}
+.match{position:absolute;right:12px;bottom:11px;font:600 11px var(--mono);color:var(--seal);letter-spacing:.05em}
+
+/* stamp */
+.stamp{position:absolute;top:9px;right:9px;width:50px;height:50px;border:2px solid currentColor;border-radius:50%;
+  display:grid;place-items:center;text-align:center;transform:rotate(8deg);
+  font:600 8.5px/1.15 var(--mono);letter-spacing:.06em;text-transform:uppercase;opacity:.92}
+.st-open{color:var(--seal)} .st-clos{color:var(--stampr)} .st-track{color:#3F6FA8}
+.st-draft{color:#8A6D1F} .st-sub{color:#5C6B5C} .st-award{color:var(--foil)} .st-decl{color:var(--stampr)}
+@keyframes stampin{0%{transform:rotate(8deg) scale(1.6);opacity:0}60%{transform:rotate(8deg) scale(.94);opacity:1}100%{transform:rotate(8deg) scale(1)}}
+.stamp.new{animation:stampin .35s ease-out}
+
+/* slip footer actions */
+.sact{display:flex;gap:8px;margin-top:10px;align-items:center}
+.bb{border:1.5px solid var(--seal);color:var(--seal);border-radius:9px;padding:7px 11px;font:600 12.5px var(--sans);background:transparent}
+.bb.fill{background:var(--seal);color:#F3EDDC}
+.bb.warn{border-color:var(--stampr);color:var(--stampr)}
+.bb.dim{border-color:#C4BA9E;color:#6B7A6B}
+.bb:disabled{opacity:.45}
+
+/* buttons on shell */
+.btn{width:100%;background:var(--seal);border:1px solid var(--seal);color:#F3EDDC;border-radius:12px;
+  padding:13px 16px;font:600 14.5px var(--sans)}
+.btn.ghost{background:transparent;color:#BFDCC6;border-color:var(--line)}
+.btn:active{transform:translateY(1px)}
+
+/* empty state */
+.empty{border:1.5px dashed var(--line);border-radius:var(--r);padding:26px 18px;text-align:center;color:var(--dim);font-size:13.5px}
+.empty .bb{margin-top:12px}
+
+/* stage tabs */
+.stages{display:flex;gap:8px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none}
+.stages::-webkit-scrollbar{display:none}
+
+/* draft */
+.dsec{margin-bottom:12px}
+.dsec .slip{padding-top:11px}
+.dsec textarea{width:100%;min-height:92px;border:1.5px dashed var(--tear);background:#FBF7EA;border-radius:9px;
+  padding:10px 11px;font:400 14px/1.55 var(--sans);color:var(--pink);margin-top:8px;resize:vertical}
+.dsec .wc{font:500 10.5px var(--mono);color:var(--pdim);margin-top:5px;text-align:right}
+.dhead{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.dhead h3{margin-right:0}
+
+/* console */
+.con{background:var(--shell3);border:1px solid var(--line);border-radius:12px;padding:12px;
+  font:400 12.5px/1.65 var(--mono);color:#CFE4D4;height:44dvh;overflow-y:auto;white-space:pre-wrap;word-break:break-word}
+.con .c-cmd{color:#EFE8D2}.con .c-dim{color:#7E9384}.con .c-ok{color:#7FCF9B}.con .c-key{color:#C9B871}
+.conrow{display:flex;gap:8px;margin-top:10px;align-items:center}
+.conrow .pr{font:600 13px var(--mono);color:var(--seal2)}
+.conrow input{flex:1;background:var(--shell2);border:1px solid var(--line);border-radius:10px;
+  padding:11px 12px;color:var(--text);font-family:var(--mono);font-size:13px}
+
+/* sheet */
+.scrim{position:fixed;inset:0;background:rgba(5,10,7,.6);opacity:0;pointer-events:none;transition:opacity .25s;z-index:55}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:60;max-width:640px;margin:0 auto;
+  max-height:88dvh;overflow-y:auto;background:var(--paper);color:var(--pink);
+  border-radius:20px 20px 0 0;padding:14px 18px calc(var(--sab) + 20px);
+  transform:translateY(105%);transition:transform .3s cubic-bezier(.3,.9,.3,1)}
+.sheet.on{transform:none}
+.sheet .grab{width:40px;height:4px;border-radius:2px;background:#CFC5A6;margin:0 auto 12px}
+.sheet h2{font:700 22px/1.2 var(--disp);margin:2px 52px 8px 0;color:#1B2A1E}
+.sheet .krow{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-top:1px dashed var(--tear);font-size:13.5px}
+.sheet .krow .k{font:600 10.5px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--pdim);padding-top:2px}
+.sheet .krow .v{text-align:right;max-width:70%}
+.sheet p.blurb{font-size:14px;color:#39493B;margin:6px 0 10px}
+.sheet textarea{width:100%;min-height:76px;border:1.5px dashed var(--tear);background:#FBF7EA;border-radius:9px;padding:10px;font:400 14px/1.5 var(--sans);color:var(--pink)}
+.xbtn{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;background:#E7DFC7;display:grid;place-items:center;color:#5C6B5C}
+
+/* dock */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:45;max-width:640px;margin:0 auto;
+  display:flex;background:rgba(15,25,18,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-top:1px solid var(--line);padding:6px 4px calc(var(--sab) + 8px)}
+.dbtn{flex:1;display:grid;justify-items:center;gap:3px;padding-top:7px;color:var(--dim);font:600 10px var(--sans);letter-spacing:.02em}
+.dbtn svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.dbtn.on{color:#EFE8D2}
+.dbtn.on::after{content:"";width:4px;height:4px;border-radius:50%;background:var(--seal2);margin-top:1px}
+
+/* toast */
+#toast{position:fixed;left:50%;bottom:calc(var(--sab) + 88px);transform:translate(-50%,16px);
+  background:var(--paper);color:var(--pink);border-radius:999px;padding:10px 16px;
+  font:600 13px var(--sans);opacity:0;transition:.25s;z-index:70;box-shadow:0 8px 24px rgba(0,0,0,.4);
+  pointer-events:none;max-width:88vw;text-align:center}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* boot */
+#boot{position:fixed;inset:0;z-index:90;background:var(--ink);display:grid;place-items:center;transition:opacity .45s}
+#boot.hide{opacity:0;pointer-events:none}
+#boot .in{width:min(330px,82vw)}
+#boot .wm{font:900 30px var(--disp);letter-spacing:-.01em;color:#F0EAD6}
+#boot .wm em{font-style:normal;color:var(--seal2)}
+#boot .tag{font:600 10px var(--mono);letter-spacing:.24em;text-transform:uppercase;color:var(--dim);margin:6px 0 18px}
+#bootlog{font:400 11.5px/1.75 var(--mono);color:#9DB4A2;min-height:8.8em;white-space:pre-wrap}
+
+/* constellation */
+.cosmo{position:relative;height:min(calc(100dvh - var(--sat) - var(--sab) - 296px),600px);min-height:330px;
+  border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#040A06;
+  box-shadow:inset 0 0 70px rgba(0,0,0,.55)}
+#sky{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab;display:block}
+#sky.drag{cursor:grabbing}
+.ghint{position:absolute;left:11px;bottom:10px;font:500 9.5px var(--mono);letter-spacing:.14em;
+  text-transform:uppercase;color:#5F7566;pointer-events:none}
+.gfabs{position:absolute;right:9px;bottom:9px;display:flex;gap:8px}
+.fab{width:38px;height:38px;border-radius:50%;background:rgba(243,237,220,.92);color:#20301F;
+  font-size:17px;display:grid;place-items:center;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+.fab.off{background:rgba(243,237,220,.38);color:#EFE8D2}
+.tile.wide{grid-column:1/-1;grid-auto-flow:column;grid-template-columns:auto 1fr;
+  justify-items:start;align-items:center;gap:12px;padding:13px 16px;text-align:left}
+.tile.wide svg{width:30px;height:30px;stroke:#E7C868}
+.tile.wide em{display:block;font:400 11.5px var(--sans);color:var(--dim);font-style:normal;margin-top:2px}
+.wlh{font:600 10.5px var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--pdim);
+  margin:14px 0 7px;border-top:1px dashed var(--tear);padding-top:11px}
+.wls{display:flex;flex-wrap:wrap;gap:6px}
+.wl{font:600 11px var(--mono);color:#2E5B41;border:1px solid #CFC5A6;background:#EFE8D2;border-radius:8px;padding:5px 8px}
+.wl::before{content:"[[";color:#B9AF8F;margin-right:1px}
+.wl::after{content:"]]";color:#B9AF8F;margin-left:1px}
+.wl.bk{color:#5C6B5C}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
 </head>
 <body>
-<p>RESTORE IN PROGRESS — please re-upload opengos.html from local artifacts if this remains.</p>
-<p>Canonical repo: <a href="https://github.com/ANAMIZED/OpenGOS">github.com/ANAMIZED/OpenGOS</a></p>
+
+<div id="boot" role="status" aria-label="OpenGOS is starting">
+  <div class="in">
+    <div class="wm">Open<em>GOS</em></div>
+    <div class="tag">Public-goods funding shell · v0.3</div>
+    <div id="bootlog"></div>
+  </div>
+</div>
+
+<header class="statusbar">
+  <span id="clock">--:--</span>
+  <b>OPENGOS</b>
+  <span><span class="dot"></span>v0.3</span>
+</header>
+
+<main>
+
+<!-- HOME -->
+<section class="view" id="view-home">
+  <div class="eyebrow">Today</div>
+  <h1 class="vh" id="greet">Good day.</h1>
+  <div class="ledger" id="ledger"></div>
+  <div class="eyebrow" style="margin-bottom:8px">Next deadline</div>
+  <div id="nextdue"></div>
+  <div class="eyebrow" style="margin:6px 0 8px">Apps</div>
+  <div class="grid">
+    <button class="tile wide" data-go="graph"><svg viewBox="0 0 24 24"><path d="M12 3.5l1.7 5 5 1.7-5 1.7-1.7 5-1.7-5-5-1.7 5-1.7z"/><circle cx="19.5" cy="4.5" r="1"/><circle cx="4.5" cy="19" r=".8"/><circle cx="20" cy="19.5" r=".7"/></svg><div><span>Constellation</span><em>The whole system as stars — every note links back to the center</em></div></button>
+    <button class="tile" data-go="discover"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span>Discover</span></button>
+    <button class="tile" data-go="pipeline"><svg viewBox="0 0 24 24"><path d="M4 5h4v14H4zM10 5h4v9h-4zM16 5h4v5h-4z"/></svg><span>Pipeline</span></button>
+    <button class="tile" data-go="draft"><svg viewBox="0 0 24 24"><path d="M4 20l4-1L20 7l-3-3L5 16l-1 4z"/><path d="M14 6l3 3"/></svg><span>Draft</span></button>
+    <button class="tile" data-go="console"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3M12 15h5"/></svg><span>Console</span></button>
+    <button class="tile" data-go="profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c1.2-3.6 4-5 7-5s5.8 1.4 7 5"/></svg><span>Profile</span></button>
+    <button class="tile" data-go="about"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 10.5V17M12 7.2v.3"/></svg><span>About</span></button>
+  </div>
+</section>
+
+<!-- DISCOVER -->
+<section class="view" id="view-discover">
+  <div class="eyebrow">Discovery · grants + public goods</div>
+  <h1 class="vh">Discover</h1>
+  <input class="search" id="q" type="search" placeholder="Search funding — try “open source”, “security”, “science”…" autocomplete="off">
+  <div class="chips" id="srcChips"></div>
+  <div class="chips" id="tagChips"></div>
+  <div class="row2">
+    <span class="eyebrow" style="flex:1" id="rescount"></span>
+    <select class="sel" id="sort" aria-label="Sort results">
+      <option value="match">Best match</option>
+      <option value="due">Deadline</option>
+      <option value="amt">Amount</option>
+    </select>
+  </div>
+  <div id="results"></div>
+</section>
+
+<!-- PIPELINE -->
+<section class="view" id="view-pipeline">
+  <div class="eyebrow">Lifecycle</div>
+  <h1 class="vh">Pipeline</h1>
+  <div class="stages" id="stageTabs"></div>
+  <div id="pipelist"></div>
+</section>
+
+<!-- DRAFT -->
+<section class="view" id="view-draft">
+  <div class="eyebrow">Grounded drafting</div>
+  <h1 class="vh">Draft</h1>
+  <p class="sub">Outlines are grounded in the opportunity and your profile — works for grants and sponsorship vehicles alike.</p>
+  <select class="sel" id="draftPick" style="width:100%"></select>
+  <div class="gap"></div>
+  <div id="draftBody"></div>
+</section>
+
+<!-- CONSOLE -->
+<section class="view" id="view-console">
+  <div class="eyebrow">MCP interface · simulated stdio</div>
+  <h1 class="vh">Console</h1>
+  <div class="con" id="con" aria-live="polite"></div>
+  <div class="chips" style="margin-top:10px" id="conChips"></div>
+  <div class="conrow">
+    <span class="pr">og&gt;</span>
+    <input id="conIn" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="type a tool… (help)">
+    <button class="bb fill" id="conRun">Run</button>
+  </div>
+</section>
+
+<!-- PROFILE -->
+<section class="view" id="view-profile">
+  <div class="eyebrow">Profile steward</div>
+  <h1 class="vh">Profile</h1>
+  <p class="sub">Your profile biases ranking and grounds every draft. Match scores update everywhere the moment you save.</p>
+  <label class="fl" for="pName">Project name</label>
+  <input class="fi" id="pName" placeholder="e.g. Lumen — open telemetry for small nonprofits">
+  <label class="fl" for="pPitch">One-line pitch</label>
+  <input class="fi" id="pPitch" placeholder="What it does, for whom">
+  <label class="fl">Focus areas</label>
+  <div class="chips" id="pTags"></div>
+  <div class="gap"></div>
+  <button class="btn" id="pSave">Save profile</button>
+</section>
+
+<!-- GRAPH -->
+<section class="view" id="view-graph">
+  <div class="eyebrow">Knowledge graph · super star: opengos</div>
+  <h1 class="vh">Constellation</h1>
+  <input class="search" id="gq" type="search" placeholder="Find a star — grant, tool, source, concept…" autocomplete="off" style="margin-bottom:8px">
+  <div class="chips" id="gKinds" style="padding-bottom:8px"></div>
+  <div class="cosmo">
+    <canvas id="sky" aria-label="Interactive 3D knowledge constellation. Drag to rotate, pinch or scroll to zoom, tap a star to open its note."></canvas>
+    <div class="ghint">drag rotate · pinch zoom · tap a star</div>
+    <div class="gfabs">
+      <button class="fab" id="gSpin" aria-label="Toggle auto-rotate" title="Auto-rotate">⟳</button>
+      <button class="fab" id="gHome" aria-label="Reset view" title="Reset view">⌖</button>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="view" id="view-about">
+  <div class="eyebrow">System</div>
+  <h1 class="vh">About</h1>
+  <div class="slip">
+    <div class="ser">OGOS · v0.3 · APACHE-2.0</div>
+    <h3>What this is</h3>
+    <p style="font-size:13.5px;color:#39493B;margin-top:4px">A single-file, no-backend interactive shell for <b>OpenGOS</b> — the open-source agentic MCP server for grants and public-goods funding. Discovery, ranking, lifecycle tracking, grounded drafting, a simulated MCP console, and a 3D knowledge constellation, all in one HTML file. Everything runs locally in your browser; webfonts load from Google Fonts and fall back to system type without a network.</p>
+    <div class="tags"><span class="tg src">grants.gov</span><span class="tg src">nsf</span><span class="tg src">public goods</span><span class="tg">mcp</span><span class="tg">langgraph</span></div>
+  </div>
+  <div class="slip">
+    <div class="ser">NOTE · SAMPLE DATA</div>
+    <h3>Data in this demo</h3>
+    <p style="font-size:13.5px;color:#39493B;margin-top:4px">The catalog lists real, well-known funding programs, but amounts and deadlines here are <b>illustrative</b> and computed relative to today — always verify with the funder. The full server pulls live data from Grants.gov, NSF, and the public-goods catalog.</p>
+  </div>
+  <button class="btn ghost" id="exportBtn">Export my data (.json)</button>
+  <div class="gap"></div>
+  <button class="btn ghost" id="importBtn">Import data</button>
+  <input type="file" id="importFile" accept="application/json" hidden>
+  <div class="gap"></div>
+  <p class="sub" style="margin-top:2px">Source · <a href="https://github.com/ANAMIZED/opengrants-os" target="_blank" rel="noopener">github.com/ANAMIZED/opengrants-os</a><br>Demo state lives in memory — use Export to keep it.</p>
+</section>
+
+</main>
+
+<nav class="dock" aria-label="Main">
+  <button class="dbtn" data-go="home"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9h-5v-6h-6v6H4z"/></svg>Home</button>
+  <button class="dbtn" data-go="discover"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>Discover</button>
+  <button class="dbtn" data-go="graph"><svg viewBox="0 0 24 24"><path d="M12 4l1.6 4.9L18.5 10.5l-4.9 1.6L12 17l-1.6-4.9L5.5 10.5l4.9-1.6z"/><circle cx="19" cy="5" r="1"/><circle cx="5" cy="18.5" r=".8"/></svg>Graph</button>
+  <button class="dbtn" data-go="pipeline"><svg viewBox="0 0 24 24"><path d="M4 5h4v14H4zM10 5h4v9h-4zM16 5h4v5h-4z"/></svg>Pipeline</button>
+  <button class="dbtn" data-go="draft"><svg viewBox="0 0 24 24"><path d="M4 20l4-1L20 7l-3-3L5 16l-1 4z"/><path d="M14 6l3 3"/></svg>Draft</button>
+  <button class="dbtn" data-go="console"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3M12 15h5"/></svg>Console</button>
+</nav>
+
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true"></div>
+<div id="toast" role="status"></div>
+
+<script>
+/* ═ OpenGOS · app runtime ═ */
+"use strict";
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const DAY=864e5;
+
+/* ── catalog (real programs · illustrative amounts/deadlines) ── */
+const DATA=[
+ {id:"OG-0101",src:"nsf",kind:"grant",title:"Pathways to Enable Secure Open-Source Ecosystems (PESOSE)",funder:"U.S. National Science Foundation",cur:"$",lo:300000,hi:1500000,dueIn:20,tags:["open-source","security","research"],blurb:"POSE's successor — grows research-born open source into secure, sustainably managed ecosystems.",elig:"US-based teams building an OSS ecosystem from existing research artifacts.",url:"https://www.nsf.gov"},
+ {id:"OG-0102",src:"nsf",kind:"grant",title:"Cyberinfrastructure for Sustained Scientific Innovation (CSSI)",funder:"U.S. National Science Foundation",cur:"$",lo:600000,hi:5000000,dueIn:104,tags:["research","science","infrastructure"],blurb:"Funds robust, reusable software and data cyberinfrastructure for the science community.",elig:"US institutions of higher education and eligible nonprofits.",url:"https://www.nsf.gov"},
+ {id:"OG-0103",src:"pg",kind:"grant",title:"Public Knowledge Grants",funder:"The Andrew W. Mellon Foundation",cur:"$",lo:100000,hi:1500000,roll:true,tags:["research","community","education"],blurb:"Backs libraries, archives, and the open infrastructure that keeps knowledge public.",elig:"US nonprofits and cultural institutions; inquiry first.",url:"https://www.mellon.org"},
+ {id:"OG-0104",src:"gov",kind:"grant",title:"National Leadership Grants for Libraries",funder:"Institute of Museum & Library Services",cur:"$",lo:50000,hi:1000000,dueIn:126,tags:["community","infrastructure","open-source"],blurb:"Advances library practice nationwide; open-source platform work is regularly funded.",elig:"US libraries, archives, and partnering organizations.",url:"https://www.imls.gov"},
+ {id:"OG-0105",src:"pg",kind:"grant",title:"NGI Zero Commons Fund",funder:"NLnet Foundation",cur:"€",lo:5000,hi:50000,dueIn:50,tags:["open-source","internet","privacy"],blurb:"NGI Zero's successor — small, fast grants for the open internet commons, light paperwork intact.",elig:"Individuals and teams worldwide building open internet tech.",url:"https://nlnet.nl"},
+ {id:"OG-0106",src:"pg",kind:"grant",title:"Sovereign Tech Agency — Fund",funder:"Sovereign Tech Agency (DE)",cur:"€",lo:50000,hi:500000,roll:true,tags:["infrastructure","security","open-source"],blurb:"Invests in the maintenance and security of critical open digital infrastructure.",elig:"Maintainers of widely-used foundational open technologies.",url:"https://www.sovereign.tech"},
+ {id:"OG-0107",src:"pg",kind:"grant",title:"Prototype Fund",funder:"Prototype Fund / BMBF (DE)",cur:"€",lo:47500,hi:158000,dueIn:110,tags:["open-source","security","public-interest"],blurb:"Relaunched: up to ten months of funding for open, public-interest software with a data-security focus.",elig:"Individuals and small teams resident in Germany.",url:"https://prototypefund.de"},
+ {id:"OG-0108",src:"pg",kind:"grant",title:"Alpha-Omega Project",funder:"OpenSSF",cur:"$",lo:25000,hi:400000,roll:true,tags:["security","open-source","infrastructure"],blurb:"Improves the security posture of the most critical open-source projects.",elig:"Critical OSS projects and the ecosystems around them.",url:"https://openssf.org"},
+ {id:"OG-0109",src:"pg",kind:"grant",title:"Small Development Grants",funder:"NumFOCUS",cur:"$",lo:3000,hi:10000,dueIn:41,tags:["science","open-source","research"],blurb:"Quarterly micro-grants for the open-source scientific computing stack.",elig:"NumFOCUS sponsored & affiliated projects.",url:"https://numfocus.org"},
+ {id:"OG-0110",src:"pg",kind:"grant",title:"PSF Grants Program",funder:"Python Software Foundation",cur:"$",lo:500,hi:15000,roll:true,tags:["community","open-source","education"],blurb:"Rolling support for Python community events, education, and outreach worldwide.",elig:"Python community organizers and projects, worldwide.",url:"https://www.python.org/psf/"},
+ {id:"OG-0111",src:"pg",kind:"sponsorship",title:"GitHub Sponsors",funder:"GitHub",cur:"$",lo:null,hi:null,roll:true,tags:["open-source","community"],blurb:"Recurring sponsorships straight to maintainers — a first-class funding vehicle, not an afterthought.",elig:"Maintainers and organizations in supported regions.",url:"https://github.com/sponsors"},
+ {id:"OG-0112",src:"pg",kind:"fiscal host",title:"Open Collective",funder:"Open Collective / OSC",cur:"$",lo:null,hi:null,roll:true,tags:["community","open-source","infrastructure"],blurb:"Transparent fiscal hosting so your project can accept donations and pay contributors.",elig:"Open projects and communities; fiscal-host review applies.",url:"https://opencollective.com"},
+ {id:"OG-0113",src:"pg",kind:"quadratic",title:"Gitcoin Grants Round",funder:"Gitcoin",cur:"$",lo:null,hi:null,dueIn:23,tags:["open-source","community","web3"],blurb:"Quadratic funding rounds where many small donors direct matching pools to public goods.",elig:"Public-goods projects accepted into an active round.",url:"https://www.gitcoin.co"},
+ {id:"OG-0114",src:"pg",kind:"grant",title:"Essential Open Source Software for Science",funder:"Chan Zuckerberg Initiative",cur:"$",lo:100000,hi:400000,dueIn:95,tags:["science","open-source","research"],blurb:"Sustains open-source software that is essential to biomedical research.",elig:"Maintainers of widely-used scientific OSS.",url:"https://chanzuckerberg.com"},
+ {id:"OG-0115",src:"nsf",kind:"grant",title:"America's Seed Fund (SBIR/STTR)",funder:"U.S. National Science Foundation",cur:"$",lo:305000,hi:1250000,dueIn:55,tags:["research","science","infrastructure"],blurb:"Non-dilutive federal R&D funding for deep-tech startups — Phase I pilots through Phase II scale-up.",elig:"US small businesses; start with a Project Pitch.",url:"https://seedfund.nsf.gov"},
+ {id:"OG-0116",src:"gov",kind:"grant",title:"ROSES — Open-Source Tools, Frameworks, and Libraries",funder:"NASA",cur:"$",lo:150000,hi:750000,dueIn:92,tags:["science","open-source","research"],blurb:"Funds the open-source software that space and Earth science runs on, under NASA's open-science push.",elig:"US-eligible research teams proposing via ROSES/NSPIRES.",url:"https://science.nasa.gov"},
+ {id:"OG-0117",src:"nsf",kind:"compute",title:"NAIRR Pilot — Resource Allocations",funder:"NSF & federal partners",cur:"$",lo:null,hi:null,roll:true,tags:["ai","research","infrastructure"],blurb:"No-cost national AI research infrastructure — GPUs, models, and datasets allocated to open projects.",elig:"US-based researchers and educators; results must be open.",url:"https://nairrpilot.org"},
+ {id:"OG-0118",src:"pg",kind:"grant",title:"Sloan Technology Program — Open Source",funder:"Alfred P. Sloan Foundation",cur:"$",lo:100000,hi:1000000,roll:true,tags:["open-source","science","research"],blurb:"Backs the people and institutions that make open source healthier in research, from tooling to sustainability.",elig:"Nonprofits and universities; inquiries welcome before proposals.",url:"https://sloan.org"},
+ {id:"OG-0119",src:"pg",kind:"grant",title:"GitHub Secure Open Source Fund",funder:"GitHub",cur:"$",lo:10000,hi:10000,dueIn:52,tags:["security","open-source","community"],blurb:"Funding plus a hands-on security program for maintainers of widely used projects.",elig:"Maintainers of actively used open-source projects.",url:"https://resources.github.com"},
+ {id:"OG-0120",src:"pg",kind:"grant",title:"FLOSS/fund",funder:"Zerodha",cur:"$",lo:10000,hi:100000,roll:true,tags:["open-source","infrastructure","community"],blurb:"$1M a year for free and open-source projects anywhere in the world — apply with a public funding.json.",elig:"FOSS projects worldwide, individuals or organizations.",url:"https://floss.fund"},
+ {id:"OG-0121",src:"pg",kind:"grant",title:"Internet Freedom Fund",funder:"Open Technology Fund",cur:"$",lo:10000,hi:900000,dueIn:31,tags:["internet","privacy","security"],blurb:"Supports open technology that helps people beat censorship and surveillance online.",elig:"Individuals and organizations worldwide; open-source outcomes required.",url:"https://www.opentech.fund"},
+ {id:"OG-0122",src:"pg",kind:"grant",title:"Ecosystem Support Program",funder:"Ethereum Foundation",cur:"$",lo:10000,hi:250000,roll:true,tags:["open-source","web3","infrastructure"],blurb:"Grants for open-source infrastructure, research, and community goods across the broader ecosystem.",elig:"Open-source teams worldwide; rolling inquiries.",url:"https://esp.ethereum.foundation"},
+ {id:"OG-0123",src:"pg",kind:"retroactive",title:"Retro Funding",funder:"Optimism Collective",cur:"$",lo:null,hi:null,dueIn:63,tags:["web3","open-source","community"],blurb:"Rewards public-goods impact after it ships — votes allocate the pool retroactively.",elig:"Projects with demonstrated impact on the ecosystem.",url:"https://www.optimism.io"},
+ {id:"OG-0124",src:"pg",kind:"investment",title:"UNICEF Venture Fund",funder:"UNICEF",cur:"$",lo:50000,hi:100000,roll:true,tags:["open-source","ai","community"],blurb:"Equity-free investment in open-source frontier tech from startups in UNICEF programme countries.",elig:"Registered startups in eligible countries; open source required.",url:"https://www.unicef.org/innovation"},
+ {id:"OG-0125",src:"pg",kind:"stipend",title:"Outreachy Internships",funder:"Outreachy / Software Freedom Conservancy",cur:"$",lo:7000,hi:7000,dueIn:19,tags:["community","education","open-source"],blurb:"Paid, remote open-source internships for people underrepresented in tech.",elig:"Applicants facing underrepresentation or systemic bias; worldwide.",url:"https://www.outreachy.org"},
+ {id:"OG-0126",src:"pg",kind:"stipend",title:"Google Summer of Code",funder:"Google",cur:"$",lo:1500,hi:6600,dueIn:200,tags:["education","community","open-source"],blurb:"Stipends for new contributors to ship real code with mentoring open-source organizations.",elig:"New and beginner OSS contributors 18+, worldwide.",url:"https://summerofcode.withgoogle.com"},
+ {id:"OG-0127",src:"pg",kind:"fellowship",title:"Sovereign Tech Fellowship",funder:"Sovereign Tech Agency (DE)",cur:"€",lo:null,hi:null,dueIn:74,tags:["infrastructure","security","open-source"],blurb:"Pays maintainers of critical open infrastructure for their ongoing stewardship work.",elig:"Active maintainers of widely used foundational software.",url:"https://www.sovereign.tech"},
+ {id:"OG-0128",src:"pg",kind:"fiscal host",title:"Software Freedom Conservancy",funder:"SFC",cur:"$",lo:null,hi:null,roll:true,tags:["community","open-source","infrastructure"],blurb:"A charitable home for FLOSS projects — fiscal sponsorship plus license and governance help.",elig:"Free-software projects accepted as member projects.",url:"https://sfconservancy.org"},
+ {id:"OG-0129",src:"pg",kind:"sponsorship",title:"Tidelift Maintainer Program",funder:"Tidelift (Sonar)",cur:"$",lo:null,hi:null,roll:true,tags:["open-source","security","infrastructure"],blurb:"Pays maintainers to keep packages secure and well-maintained for enterprise subscribers.",elig:"Maintainers of packages with enterprise usage.",url:"https://tidelift.com"},
+ {id:"OG-0130",src:"pg",kind:"audit",title:"Security Audits for Open Source",funder:"OSTIF",cur:"$",lo:null,hi:null,roll:true,tags:["security","open-source","infrastructure"],blurb:"Organizes and funds professional security audits for critical open-source projects.",elig:"Widely used OSS projects; propose an engagement.",url:"https://ostif.org"},
+ {id:"OG-0131",src:"pg",kind:"grant",title:"Wikimedia Research Fund",funder:"Wikimedia Foundation",cur:"$",lo:2000,hi:50000,dueIn:121,tags:["research","community","education"],blurb:"Annual grants for research that helps the Wikimedia projects and free knowledge thrive.",elig:"Researchers and practitioners worldwide.",url:"https://meta.wikimedia.org"},
+ {id:"OG-0132",src:"pg",kind:"compute",title:"ZeroGPU & Community Grants",funder:"Hugging Face",cur:"$",lo:null,hi:null,roll:true,tags:["ai","open-source","community"],blurb:"Free shared GPUs and support so open models and demos can run in public.",elig:"Open-source ML builders publishing on the Hub.",url:"https://huggingface.co"},
+ {id:"OG-0133",src:"pg",kind:"grant",title:"ISOC Foundation Grants",funder:"Internet Society Foundation",cur:"$",lo:30000,hi:200000,dueIn:77,tags:["internet","community","research"],blurb:"Grant programmes for a stronger, more resilient, more open internet worldwide.",elig:"Nonprofits and Internet Society chapters, by programme.",url:"https://www.isocfoundation.org"},
+ {id:"OG-0134",src:"pg",kind:"grant",title:"Catalyst Grant",funder:"Digital Science",cur:"$",lo:25000,hi:25000,dueIn:98,tags:["research","science","community"],blurb:"Seed awards for bold early-stage ideas in research tools and open infrastructure.",elig:"Individuals and early teams worldwide.",url:"https://www.digital-science.com"}
+];
+const SRC={gov:"Grants.gov",nsf:"NSF",pg:"Public goods"};
+const TAGPOOL=["open-source","ai","research","science","infrastructure","security","community","privacy","education"];
+const STAGES=["Saved","Drafting","Submitted","Decided"];
+const SECTIONS=[["sum","Summary"],["need","Statement of need"],["obj","Objectives"],["app","Approach & workplan"],["bud","Budget narrative"],["eva","Evaluation & sustainability"]];
+
+/* ── state (in-memory · export/import to persist) ── */
+const state={
+ profile:{name:"",pitch:"",tags:new Set(["open-source","infrastructure"])},
+ tracked:{},               // id → {stage,result,notes,drafts:{}}
+ f:{q:"",src:"all",tags:new Set(),sort:"match"},
+ stage:"Saved"
+};
+DATA.forEach(g=>{ g.due = g.roll?null:new Date(Date.now()+g.dueIn*DAY); });
+const byId=id=>DATA.find(g=>g.id===id);
+const daysLeft=g=>g.due?Math.max(0,Math.ceil((g.due-Date.now())/DAY)):null;
+const money=n=>n>=1e6?(n/1e6).toFixed(n%1e6?1:0)+"M":n>=1e3?Math.round(n/1e3)+"k":n;
+const amtText=g=>g.lo==null?({sponsorship:"Recurring",quadratic:"Matched pool","fiscal host":"Donations"}[g.kind]||"Varies")
+ :g.lo===g.hi?g.cur+money(g.lo):g.cur+money(g.lo)+"–"+g.cur+money(g.hi);
+
+function match(g){
+ let s=40;
+ [...state.profile.tags].forEach(t=>{ if(g.tags.includes(t)) s+=17; });
+ const words=(state.profile.name+" "+state.profile.pitch).toLowerCase().split(/\W+/).filter(w=>w.length>3);
+ words.forEach(w=>{ if((g.title+" "+g.blurb).toLowerCase().includes(w)) s+=3; });
+ if(g.tags.includes("open-source")) s+=6;              // the promised open-source bias
+ const d=daysLeft(g); if(d!==null&&d<=60) s+=4;
+ return Math.max(22,Math.min(99,s));
+}
+function stampFor(g){
+ const t=state.tracked[g.id];
+ if(t){ if(t.stage==="Decided") return t.result==="Awarded"?["st-award","AWAR\u00ADDED"]:["st-decl","DECL\u00ADINED"];
+   return {Saved:["st-track","TRACK\u00ADED"],Drafting:["st-draft","DRAFT\u00ADING"],Submitted:["st-sub","SUBMIT\u00ADTED"]}[t.stage]; }
+ const d=daysLeft(g);
+ return (d!==null&&d<=14)?["st-clos","CLOS\u00ADING"]:["st-open","OPEN"];
+}
+const dueHTML=g=>{
+ const d=daysLeft(g);
+ if(d===null) return '<span class="due roll">rolling</span>';
+ return `<span class="due ${d<=14?"soon":""}">due in ${d}d</span>`;
+};
+
+function slipHTML(g,ctx){
+ const [cls,txt]=stampFor(g), t=state.tracked[g.id];
+ let acts="";
+ if(ctx==="pipe"&&t){
+  const i=STAGES.indexOf(t.stage);
+  if(t.stage==="Decided"){
+   acts=`<div class="sact">
+     <button class="bb ${t.result==="Awarded"?"fill":""}" data-act="res" data-id="${g.id}" data-v="Awarded">Awarded</button>
+     <button class="bb warn" data-act="res" data-id="${g.id}" data-v="Declined" ${t.result==="Declined"?'style="background:var(--stampr);color:#F3EDDC"':""}>Declined</button>
+     <button class="bb dim" data-act="back" data-id="${g.id}">◀</button>
+     <button class="bb warn" data-act="rm" data-id="${g.id}" style="margin-left:auto">Remove</button></div>`;
+  }else{
+   acts=`<div class="sact">
+     <button class="bb dim" data-act="back" data-id="${g.id}" ${i===0?"disabled":""}>◀</button>
+     <button class="bb fill" data-act="fwd" data-id="${g.id}">▶ ${STAGES[i+1]}</button>
+     <button class="bb" data-act="draftgo" data-id="${g.id}">Draft</button>
+     <button class="bb warn" data-act="rm" data-id="${g.id}" style="margin-left:auto">Remove</button></div>`;
+  }
+ }
+ return `<div class="slip" data-open="${g.id}" tabindex="0" role="button" aria-label="${esc(g.title)}">
+   <div class="stamp ${cls}">${txt}</div>
+   <div class="ser">${g.id} · ${SRC[g.src].toUpperCase()}</div>
+   <h3>${esc(g.title)}</h3>
+   <div class="meta"><span>${esc(g.funder)}</span><span class="amt">${amtText(g)}</span>${dueHTML(g)}</div>
+   <div class="tags"><span class="tg src">${SRC[g.src]}</span>${g.kind!=="grant"?`<span class="tg src">${g.kind}</span>`:""}${g.tags.map(x=>`<span class="tg">${x}</span>`).join("")}</div>
+   <div class="match">${match(g)} match</div>${acts}</div>`;
+}
+
+/* ── views ── */
+function renderHome(){
+ const h=new Date().getHours(), n=state.profile.name.trim();
+ $("#greet").textContent=(h<12?"Good morning":h<18?"Good afternoon":"Good evening")+(n?", "+n.split(" ")[0]:"")+".";
+ const tr=Object.keys(state.tracked).length;
+ const due30=DATA.filter(g=>{const d=daysLeft(g);return d!==null&&d<=30}).length;
+ $("#ledger").innerHTML=[["Catalog",DATA.length],["Tracked",tr],["Due ≤30d",due30]]
+  .map(([l,n])=>`<div class="cell"><div class="n">${n}</div><div class="l">${l}</div></div>`).join("");
+ const cands=DATA.filter(g=>g.due).sort((a,b)=>a.due-b.due);
+ const pick=cands.find(g=>state.tracked[g.id])||cands[0];
+ $("#nextdue").innerHTML=pick?slipHTML(pick):`<div class="empty">No dated deadlines in the catalog.</div>`;
+}
+function renderDiscover(){
+ const f=state.f;
+ $("#srcChips").innerHTML=["all","gov","nsf","pg"].map(s=>{
+  const n=s==="all"?DATA.length:DATA.filter(g=>g.src===s).length;
+  return `<button class="chip ${f.src===s?"on":""}" data-src="${s}">${s==="all"?"All sources":SRC[s]}<span class="ct">${n}</span></button>`;}).join("");
+ const tags=[...new Set(DATA.flatMap(g=>g.tags))];
+ $("#tagChips").innerHTML=tags.map(t=>`<button class="chip ${f.tags.has(t)?"on":""}" data-tag="${t}">${t}</button>`).join("");
+ let list=DATA.filter(g=>(f.src==="all"||g.src===f.src)
+   &&(![...f.tags].length||[...f.tags].every(t=>g.tags.includes(t)))
+   &&(!f.q||(g.title+" "+g.funder+" "+g.blurb+" "+g.tags.join(" ")).toLowerCase().includes(f.q)));
+ list.sort((a,b)=>f.sort==="amt"?(b.hi||b.lo||0)-(a.hi||a.lo||0)
+   :f.sort==="due"?((a.due||Infinity)-(b.due||Infinity))
+   :match(b)-match(a)||((a.due||Infinity)-(b.due||Infinity)));
+ $("#rescount").textContent=`${list.length} of ${DATA.length} opportunities`;
+ $("#results").innerHTML=list.map(g=>slipHTML(g)).join("")||`<div class="empty">No matches for that filter.<br>Clear a chip or broaden the search.</div>`;
+}
+function renderPipeline(){
+ const counts=Object.fromEntries(STAGES.map(s=>[s,0]));
+ Object.values(state.tracked).forEach(t=>counts[t.stage]++);
+ $("#stageTabs").innerHTML=STAGES.map(s=>`<button class="chip ${state.stage===s?"on":""}" data-stage="${s}">${s}<span class="ct">${counts[s]}</span></button>`).join("");
+ const ids=Object.keys(state.tracked).filter(id=>state.tracked[id].stage===state.stage);
+ $("#pipelist").innerHTML=ids.length?ids.map(id=>slipHTML(byId(id),"pipe")).join("")
+  :`<div class="empty">Nothing in <b>${state.stage}</b> yet.<br>Track an opportunity from Discover and move it through the lifecycle.<br><button class="bb fill" data-go="discover">Open Discover</button></div>`;
+}
+function starter(sec,g){
+ const p=state.profile, name=p.name.trim()||"Our project", pitch=p.pitch.trim();
+ const map={
+  sum:`${name} requests ${amtText(g)} from ${g.funder} under “${g.title}”. ${pitch?pitch+" ":""}The work is released openly and serves the public-goods ecosystem this program exists to strengthen.`,
+  need:`${g.funder} funds this program because ${g.blurb.charAt(0).toLowerCase()+g.blurb.slice(1)} ${name} sits squarely in that gap: today, the people we serve lack a maintained, open alternative.`,
+  obj:`Over the funding period we will (1) ship a stable, documented release; (2) grow an active contributor base beyond the core team; (3) publish all outputs under an open license with clear provenance.`,
+  app:`Work proceeds in three phases — build, harden, hand off — with public milestones each month. All development happens in the open repository from day one.`,
+  bud:`Funds cover maintainer time, security review, documentation, and community infrastructure. ${g.kind!=="grant"?"As a "+g.kind+" vehicle, amounts recur or pool — we budget conservatively against the floor.":"Indirects follow the funder’s published policy."}`,
+  eva:`We track adoption, contributor retention, and issue-resolution time, reported quarterly in public. Sustainability continues via ${g.src==="pg"?"the public-goods funding mix (sponsorships, collectives, follow-on grants)":"institutional support and follow-on public-goods funding"}.`};
+ return map[sec];
+}
+function renderDraft(keepPick){
+ const ids=Object.keys(state.tracked);
+ const sel=$("#draftPick"), cur=keepPick||sel.value;
+ sel.innerHTML=ids.length?ids.map(id=>`<option value="${id}" ${id===cur?"selected":""}>${byId(id).id} — ${esc(byId(id).title)}</option>`).join("")
+  :`<option value="">No tracked opportunities yet</option>`;
+ const id=sel.value;
+ if(!id){ $("#draftBody").innerHTML=`<div class="empty">Track something in Discover, then draft it here.<br><button class="bb fill" data-go="discover">Open Discover</button></div>`; return; }
+ const g=byId(id), t=state.tracked[id]; t.drafts=t.drafts||{};
+ $("#draftBody").innerHTML=SECTIONS.map(([k,label])=>`
+   <div class="dsec"><div class="slip" style="padding-left:30px">
+     <div class="dhead"><h3 style="margin-right:0">${label}</h3>
+       <button class="bb dim" data-act="ins" data-id="${id}" data-sec="${k}">Insert starter</button></div>
+     <textarea data-draft="${k}" data-id="${id}" aria-label="${label}"></textarea>
+     <div class="wc" data-wc="${k}">0 words</div>
+   </div></div>`).join("")+
+  `<button class="btn" id="copyDraft">Copy full draft</button>
+   <p class="sub" style="margin-top:10px">Grounded in ${esc(g.funder)} · ${amtText(g)} · ${g.due?("due in "+daysLeft(g)+"d"):"rolling"}.</p>`;
+ $$("#draftBody textarea").forEach(ta=>{
+  ta.value=t.drafts[ta.dataset.draft]||"";
+  upWC(ta);
+  ta.addEventListener("input",()=>{ t.drafts[ta.dataset.draft]=ta.value; upWC(ta); });
+ });
+ $("#copyDraft").onclick=()=>{
+  const txt=SECTIONS.map(([k,l])=>l.toUpperCase()+"\n"+(t.drafts[k]||"")).join("\n\n")+`\n\n— drafted with OpenGOS for ${g.title} (${g.id})`;
+  (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>toast("Draft copied")).catch(()=>toast("Copy blocked — select text manually"));
+ };
+}
+const upWC=ta=>{ const n=(ta.value.trim().match(/\S+/g)||[]).length;
+ ta.closest(".slip").querySelector(`[data-wc="${ta.dataset.draft}"]`).textContent=n+" words"; };
+
+function renderProfile(){
+ $("#pName").value=state.profile.name; $("#pPitch").value=state.profile.pitch;
+ $("#pTags").innerHTML=TAGPOOL.map(t=>`<button class="chip ${state.profile.tags.has(t)?"on":""}" data-ptag="${t}">${t}</button>`).join("");
+}
+
+/* ── sheet ── */
+function openSheet(html){ $("#sheet").innerHTML=html; $("#sheet").classList.add("on"); $("#scrim").classList.add("on"); }
+function closeSheet(){ $("#sheet").classList.remove("on"); $("#scrim").classList.remove("on"); }
+$("#scrim").addEventListener("click",closeSheet);
+function openSlip(id){
+ const g=byId(id), t=state.tracked[id], [cls,txt]=stampFor(g);
+ openSheet(`
+  <div class="grab"></div><button class="xbtn" data-close aria-label="Close">✕</button>
+  <div class="stamp ${cls}" style="top:20px;right:52px">${txt}</div>
+  <div class="ser" style="font:500 10.5px var(--mono);letter-spacing:.16em;color:var(--pdim)">${g.id} · ${SRC[g.src].toUpperCase()} · ${g.kind.toUpperCase()}</div>
+  <h2>${esc(g.title)}</h2>
+  <p class="blurb">${esc(g.blurb)}</p>
+  <div class="krow"><span class="k">Funder</span><span class="v">${esc(g.funder)}</span></div>
+  <div class="krow"><span class="k">Amount</span><span class="v" style="font-family:var(--mono)">${amtText(g)}<br><small style="color:var(--pdim)">illustrative</small></span></div>
+  <div class="krow"><span class="k">Deadline</span><span class="v">${g.due?g.due.toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"})+" · in "+daysLeft(g)+"d":"Rolling"}<br><small style="color:var(--pdim)">verify with funder</small></span></div>
+  <div class="krow"><span class="k">Eligibility</span><span class="v">${esc(g.elig)}</span></div>
+  <div class="krow"><span class="k">Match</span><span class="v" style="font-family:var(--mono);color:var(--seal)">${match(g)} / 99</span></div>
+  ${t?`<div class="krow"><span class="k">Notes</span><span class="v" style="width:70%"><textarea data-note="${id}" placeholder="Working notes…"></textarea></span></div>`:""}
+  <div class="gap"></div>
+  <button class="btn" data-act="${t?"rm":"track"}" data-id="${id}">${t?"Stop tracking":"Track this opportunity"}</button>
+  <div class="gap"></div>
+  ${t?`<button class="btn ghost" data-act="draftgo" data-id="${id}">Open in Draft →</button><div class="gap"></div>`:""}
+  <a class="btn ghost" style="display:block;text-align:center;text-decoration:none" href="${g.url}" target="_blank" rel="noopener">Visit funder ↗</a>
+  <p style="font:500 10px var(--mono);letter-spacing:.12em;color:var(--pdim);margin-top:14px">PROVENANCE · ${g.src==="nsf"?"search_nsf_awards":g.src==="gov"?"search_grants":"list_public_goods_funding"} · corpus v0.3</p>`);
+ const ta=$("#sheet textarea"); if(ta&&t){ ta.value=t.notes||""; ta.addEventListener("input",()=>t.notes=ta.value); }
+}
+
+/* ── actions ── */
+function track(id,stage="Saved"){ if(!state.tracked[id]) state.tracked[id]={stage,result:null,notes:"",drafts:{}}; else state.tracked[id].stage=stage; refresh(); }
+function untrack(id){ delete state.tracked[id]; refresh(); }
+function refresh(){ renderHome(); renderDiscover(); renderPipeline(); renderDraft(); }
+function toast(m){ const t=$("#toast"); t.textContent=m; t.classList.add("show"); clearTimeout(t._x); t._x=setTimeout(()=>t.classList.remove("show"),1900); }
+
+document.addEventListener("click",e=>{
+ const go=e.target.closest("[data-go]"); if(go){ nav(go.dataset.go); return; }
+ if(e.target.closest("[data-close]")){ closeSheet(); return; }
+ const chip=e.target.closest(".chip");
+ if(chip){
+  if(chip.dataset.src!==undefined){ state.f.src=chip.dataset.src; renderDiscover(); }
+  else if(chip.dataset.tag){ state.f.tags.has(chip.dataset.tag)?state.f.tags.delete(chip.dataset.tag):state.f.tags.add(chip.dataset.tag); renderDiscover(); }
+  else if(chip.dataset.stage){ state.stage=chip.dataset.stage; renderPipeline(); }
+  else if(chip.dataset.ptag){ const t=chip.dataset.ptag,s=state.profile.tags; s.has(t)?s.delete(t):s.add(t); renderProfile(); }
+  else if(chip.dataset.cmd){ $("#conIn").value=chip.dataset.cmd; runCmd(); }
+  return;
+ }
+ const act=e.target.closest("[data-act]");
+ if(act){
+  const {act:a,id}=act.dataset, t=state.tracked[id];
+  if(a==="track"){ track(id); toast("Tracked — moved to Pipeline · Saved"); openSlip(id); }
+  else if(a==="rm"){
+    if(act.dataset.arm){ untrack(id); closeSheet(); toast("Removed from pipeline"); }
+    else { act.dataset.arm="1"; act.textContent="Sure? Tap again"; setTimeout(()=>{delete act.dataset.arm; if(document.contains(act)) act.textContent=act.classList.contains("btn")?"Stop tracking":"Remove";},1800); }
+  }
+  else if(a==="fwd"&&t){ t.stage=STAGES[Math.min(3,STAGES.indexOf(t.stage)+1)]; state.stage=t.stage; refresh(); toast("Moved to "+t.stage); }
+  else if(a==="back"&&t){ t.stage=STAGES[Math.max(0,STAGES.indexOf(t.stage)-1)]; t.result=null; state.stage=t.stage; refresh(); }
+  else if(a==="res"&&t){ t.result=act.dataset.v; refresh(); toast(act.dataset.v==="Awarded"?"Stamped: AWARDED 🎉":"Stamped: declined"); }
+  else if(a==="draftgo"){ if(!t) track(id,"Drafting"); closeSheet(); nav("draft"); renderDraft(id); }
+  else if(a==="ins"){ const sec=act.dataset.sec, tr=state.tracked[id]; tr.drafts[sec]=starter(sec,byId(id));
+    const ta=$(`textarea[data-draft="${sec}"]`); ta.value=tr.drafts[sec]; upWC(ta); toast("Starter inserted — make it yours"); }
+  return;
+ }
+ const open=e.target.closest("[data-open]");
+ if(open) openSlip(open.dataset.open);
+});
+document.addEventListener("keydown",e=>{
+ if((e.key==="Enter"||e.key===" ")&&e.target.matches("[data-open]")){ e.preventDefault(); openSlip(e.target.dataset.open); }
+ if(e.key==="Escape") closeSheet();
+});
+$("#q").addEventListener("input",e=>{ state.f.q=e.target.value.trim().toLowerCase(); renderDiscover(); });
+$("#sort").addEventListener("change",e=>{ state.f.sort=e.target.value; renderDiscover(); });
+$("#draftPick").addEventListener("change",()=>renderDraft());
+$("#pSave").addEventListener("click",()=>{ state.profile.name=$("#pName").value; state.profile.pitch=$("#pPitch").value;
+ refresh(); toast("Profile saved — rankings updated"); });
+
+/* ── router ── */
+const VIEWS=["home","discover","graph","pipeline","draft","console","profile","about"];
+function nav(v){ if(!VIEWS.includes(v)) v="home"; location.hash=v; setView(v); }
+function setView(v){
+ $$(".view").forEach(s=>s.classList.toggle("on",s.id==="view-"+v));
+ $$(".dbtn").forEach(b=>b.classList.toggle("on",b.dataset.go===v));
+ window.scrollTo({top:0});
+ if(OGGraph) OGGraph.onView(v);
+}
+window.addEventListener("hashchange",()=>{ const v=location.hash.replace("#",""); setView(VIEWS.includes(v)?v:"home"); });
+
+/* ── console (simulated MCP stdio) ── */
+const CMDS=["help","status","sources","search_grants","search_nsf_awards","list_public_goods_funding","list_open_source_relevant_grants","get_grant_details","draft_proposal_outline","upsert_profile","track","refresh_corpus","run_evaluation","clear"];
+function cline(txt,cls){ const el=$("#con"); el.insertAdjacentHTML("beforeend",`<span class="${cls||""}">${txt}</span>\n`); el.scrollTop=el.scrollHeight; }
+const gLine=g=>`${g.id}  ${esc(g.title).slice(0,44).padEnd(44)} ${amtText(g).padStart(10)}  ${g.due?("due "+daysLeft(g)+"d"):"rolling"}  <span class="c-ok">[${match(g)}]</span>`;
+function runCmd(){
+ const raw=$("#conIn").value.trim(); if(!raw) return;
+ cline("og&gt; "+esc(raw),"c-cmd"); $("#conIn").value="";
+ const [cmd,...rest]=raw.split(/\s+/), arg=rest.join(" ").replace(/^["']|["']$/g,"");
+ switch(cmd){
+  case"help": cline("tools:","c-dim"); CMDS.filter(c=>c!=="help").forEach(c=>cline("  "+c,"c-key")); break;
+  case"status": cline(`opengos://status`,"c-key");
+   cline(`  version 0.3.0-demo · corpus ${DATA.length} records · tracked ${Object.keys(state.tracked).length}`);
+   cline(`  profile ${state.profile.name||"(unset)"} · agents steward+ranker+drafter · bias open-source`,"c-dim"); break;
+  case"sources": cline("opengos://sources","c-key");
+   cline("  gov  Grants.gov ("+DATA.filter(g=>g.src==="gov").length+")  ·  nsf  NSF Awards ("+DATA.filter(g=>g.src==="nsf").length+")");
+   cline("  pg   Public-goods catalog ("+DATA.filter(g=>g.src==="pg").length+") · grants · sponsorships · collectives · quadratic · fellowships","c-dim"); break;
+  case"search_grants":{ const l=DATA.filter(g=>g.src!=="pg"&&(!arg||(g.title+g.blurb+g.tags.join(" ")).toLowerCase().includes(arg.toLowerCase())));
+   cline(`${l.length} result(s) · provenance: grants.gov+nsf (demo corpus)`,"c-dim"); l.forEach(g=>cline(gLine(g))); break; }
+  case"search_nsf_awards":{ const l=DATA.filter(g=>g.src==="nsf"&&(!arg||(g.title+g.blurb).toLowerCase().includes(arg.toLowerCase())));
+   cline(`${l.length} result(s) · api.nsf.gov (demo corpus)`,"c-dim"); l.forEach(g=>cline(gLine(g))); break; }
+  case"list_public_goods_funding": cline("donations · sponsorships · quadratic · open-source funds","c-dim");
+   DATA.filter(g=>g.src==="pg").forEach(g=>cline(gLine(g))); break;
+  case"list_open_source_relevant_grants": cline("ranked · open-source bias applied","c-dim");
+   [...DATA].sort((a,b)=>match(b)-match(a)).slice(0,6).forEach(g=>cline(gLine(g))); break;
+  case"get_grant_details":{ const g=byId(arg.toUpperCase());
+   if(!g){cline("not found — try an id like OG-0105","c-dim");break;}
+   cline(g.id+" · "+esc(g.title),"c-key"); cline("  "+esc(g.funder)+" · "+amtText(g)+" · "+(g.due?"due "+daysLeft(g)+"d":"rolling"));
+   cline("  "+esc(g.blurb),"c-dim"); cline("  elig: "+esc(g.elig),"c-dim"); break; }
+  case"draft_proposal_outline":{ const g=byId(arg.toUpperCase());
+   if(!g){cline("usage: draft_proposal_outline OG-0101","c-dim");break;}
+   track(g.id, state.tracked[g.id]?state.tracked[g.id].stage:"Drafting");
+   cline("outline · grounded in "+esc(g.funder),"c-dim");
+   SECTIONS.forEach(([k,l])=>cline("  ## "+l,"c-key"));
+   cline("  → tracked as Drafting · open the Draft app to edit","c-ok"); break; }
+  case"upsert_profile":{ const nm=/name="([^"]*)"/.exec(raw), tg=/tags=([\w,\-]+)/.exec(raw);
+   if(nm) state.profile.name=nm[1]; if(tg) state.profile.tags=new Set(tg[1].split(","));
+   renderProfile(); refresh(); cline("profile updated · rankings recomputed","c-ok"); break; }
+  case"track":{ const g=byId(arg.toUpperCase()); if(!g){cline("usage: track OG-0105","c-dim");break;}
+   track(g.id); cline(g.id+" → pipeline · Saved","c-ok"); break; }
+  case"refresh_corpus": cline("pull grants.gov … ok","c-dim"); cline("pull api.nsf.gov … ok","c-dim");
+   cline("pull public-goods catalog … ok","c-dim"); cline(`corpus fresh · ${DATA.length} records (static in demo)`,"c-ok"); break;
+  case"run_evaluation": cline("evaluation harness · 12 canned queries (demo numbers)","c-dim");
+   cline("  hit@5 0.83 · os-bias lift +0.21 · draft groundedness 0.9","c-ok"); break;
+  case"clear": $("#con").innerHTML=""; break;
+  default: cline("unknown tool — try <span class='c-key'>help</span>","c-dim");
+ }
+}
+$("#conRun").addEventListener("click",runCmd);
+$("#conIn").addEventListener("keydown",e=>{ if(e.key==="Enter") runCmd(); });
+$("#conChips").innerHTML=["help","status","search_grants open","list_public_goods_funding","run_evaluation"]
+ .map(c=>`<button class="chip" data-cmd="${c}">${c.split(" ")[0]}</button>`).join("");
+
+/* ── export / import ── */
+$("#exportBtn").addEventListener("click",()=>{
+ const out={app:"opengos",version:"0.3.0-demo",exportedAt:new Date().toISOString(),
+  profile:{...state.profile,tags:[...state.profile.tags]},tracked:state.tracked};
+ const a=document.createElement("a");
+ a.href=URL.createObjectURL(new Blob([JSON.stringify(out,null,2)],{type:"application/json"}));
+ a.download="opengos-data.json"; a.click(); URL.revokeObjectURL(a.href); toast("Exported opengos-data.json");
+});
+$("#importBtn").addEventListener("click",()=>$("#importFile").click());
+$("#importFile").addEventListener("change",e=>{
+ const f=e.target.files[0]; if(!f) return;
+ f.text().then(t=>{ const d=JSON.parse(t);
+  if(d.app!=="opengos"&&d.app!=="opengrants-os") throw 0;
+  state.profile={name:d.profile.name||"",pitch:d.profile.pitch||"",tags:new Set(d.profile.tags||[])};
+  state.tracked=d.tracked||{}; renderProfile(); refresh(); toast("Data imported");
+ }).catch(()=>toast("That file isn’t an OpenGOS export"));
+ e.target.value="";
+});
+
+/* ── clock + boot + init ── */
+function tick(){ $("#clock").textContent=new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}); }
+tick(); setInterval(tick,20000);
+
+track("OG-0101","Drafting"); state.tracked["OG-0101"].drafts={sum:starter("sum",byId("OG-0101"))};
+track("OG-0105","Saved");
+
+renderProfile(); refresh(); setView(VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):"home");
+cline("opengos · mcp interface (simulated stdio)","c-dim"); cline("type <span class='c-key'>help</span> to list tools","c-dim");
+
+const rm=matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ═══ Constellation · 3D knowledge graph (canvas, zero-dependency) ═══ */
+var OGGraph=(()=>{
+
+/* ── palette (from app tokens) ── */
+const COL={
+ og:{c:"#E7C868",g:"#B99334",r:13},
+ pillar:{c:"#7FCF9B",g:"#2E7D4F",r:6.6},
+ tool:{c:"#C9B871",g:"#8A6D1F",r:4.6},
+ src:{c:"#8FB7D9",g:"#3F6FA8",r:5.6},
+ grant:{c:"#F0EAD6",g:"#B9AF8F",r:5.1},
+ tag:{c:"#9DB4A2",g:"#3B5C46",r:3.9}
+};
+const KINDLBL={og:"Super star",pillar:"Pillar",tool:"MCP tool",src:"Source",grant:"Opportunity",tag:"Concept"};
+const STAMPCOL={"st-open":"#2E7D4F","st-clos":"#B3402E","st-track":"#3F6FA8","st-draft":"#8A6D1F","st-sub":"#5C6B5C","st-award":"#B99334","st-decl":"#B3402E"};
+
+/* ── knowledge base ── */
+const PILLARS=[
+ ["p-discovery","Discovery","Pulls Grants.gov, NSF Awards, and the public-goods catalog into one searchable corpus."],
+ ["p-steward","Profile Steward","Keeps your project profile — the ground truth that biases ranking and grounds every draft."],
+ ["p-ranking","Ranking Agents","Scores every opportunity against your profile, with a deliberate open-source bias."],
+ ["p-drafting","Drafting Agents","Turns a tracked opportunity plus your profile into a grounded proposal outline."],
+ ["p-corpus","Evaluation & Corpus","Refreshes the corpus and scores retrieval quality so results stay honest."]];
+const SRCN=[
+ ["s-gov","gov","Grants.gov","Federal opportunity feed — the broadest sweep of U.S. grant notices."],
+ ["s-nsf","nsf","NSF Awards","The NSF Awards API — research and cyberinfrastructure programs."],
+ ["s-pg","pg","Public-goods catalog","Sponsorships, collectives, quadratic rounds, and open-source funds."]];
+const TOOLN=[
+ ["t-sg","search_grants","p-discovery","Full-text search across the federal grants corpus.","search_grants open"],
+ ["t-nsf","search_nsf_awards","p-discovery","Queries the NSF Awards API for research programs.","search_nsf_awards infrastructure"],
+ ["t-pg","list_public_goods_funding","p-discovery","Lists sponsorships, collectives, and quadratic rounds.","list_public_goods_funding"],
+ ["t-det","get_grant_details","p-discovery","Fetches one record with eligibility and provenance.","get_grant_details OG-0105"],
+ ["t-os","list_open_source_relevant_grants","p-ranking","Ranks the corpus with the open-source bias applied.","list_open_source_relevant_grants"],
+ ["t-up","upsert_profile","p-steward","Creates or updates the profile that grounds everything.",'upsert_profile name="My project" tags=open-source,security'],
+ ["t-dr","draft_proposal_outline","p-drafting","Builds a grounded outline and tracks it as Drafting.","draft_proposal_outline OG-0101"],
+ ["t-rc","refresh_corpus","p-corpus","Re-pulls all three sources into a fresh corpus.","refresh_corpus"],
+ ["t-ev","run_evaluation","p-corpus","Scores retrieval quality on canned demo queries.","run_evaluation"]];
+
+const NODES=[], EDGES=[], byNid={};
+function addN(n){ NODES.push(n); byNid[n.id]=n; return n; }
+function addE(a,b,kind){ EDGES.push({a,b,kind:kind||"struct"}); }
+
+addN({id:"og",kind:"og",label:"OpenGOS",
+ desc:"The super star. An open-source MCP server that discovers funding across grants and public goods, ranks it against your profile, tracks the lifecycle, and grounds every draft. Everything in this sky links back here."});
+PILLARS.forEach(([id,label,desc])=>{ addN({id,kind:"pillar",label,desc}); addE("og",id); });
+SRCN.forEach(([id,key,label,desc])=>{ addN({id,kind:"src",label,desc,src:key}); addE("p-discovery",id); });
+TOOLN.forEach(([id,label,pillar,desc,cmd])=>{ addN({id,kind:"tool",label,desc,cmd,pillar}); addE(pillar,id); });
+addE("p-ranking","p-steward"); addE("p-drafting","p-steward"); addE("p-corpus","p-discovery");
+const srcNid={gov:"s-gov",nsf:"s-nsf",pg:"s-pg"};
+DATA.forEach(g=>{ addN({id:g.id,kind:"grant",label:g.title,desc:g.blurb,ref:g.id}); addE(srcNid[g.src],g.id); });
+const tf={}; DATA.forEach(g=>g.tags.forEach(t=>tf[t]=(tf[t]||0)+1));
+Object.keys(tf).filter(t=>tf[t]>=2).sort((a,b)=>tf[b]-tf[a]).forEach(t=>{
+ addN({id:"c-"+t,kind:"tag",label:t,tag:t,desc:`Concept — ${tf[t]} opportunities in the catalog share this focus.`});
+ DATA.forEach(g=>{ if(g.tags.includes(t)) addE(g.id,"c-"+t,"soft"); });
+});
+const ADJ={}; NODES.forEach(n=>ADJ[n.id]=new Set());
+EDGES.forEach(e=>{ ADJ[e.a].add(e.b); ADJ[e.b].add(e.a); });
+
+/* ── deterministic layout on nested shells ── */
+const hash=s=>{ let h=2166136261; for(let i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619); } h=Math.imul(h^h>>>16,2246822507); h=Math.imul(h^h>>>13,3266489909); h^=h>>>16; return (h>>>0)/4294967296; };
+const norm=v=>{ const l=Math.hypot(v[0],v[1],v[2])||1; return [v[0]/l,v[1]/l,v[2]/l]; };
+const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+function basis(w){ const a=Math.abs(w[1])<.9?[0,1,0]:[1,0,0]; const u=norm(cross(a,w)); return [u,cross(w,u)]; }
+function seat(n,w,rad,ang,tilt,spd){ const [u,v]=basis(w); Object.assign(n,{w,u,v,rad,ang,tilt,spd,ph:hash(n.id+"p")*6.28}); }
+function posAt(n,t){
+ if(n.kind==="og") return [0,0,0];
+ const a=n.ang+t*n.spd, tl=n.tilt+Math.sin(t*.3+n.ph)*.018;
+ const st=Math.sin(tl), ct=Math.cos(tl), ca=Math.cos(a), sa=Math.sin(a);
+ const r=n.rad*(1+(n.kind==="pillar"?Math.sin(t*.5+n.ph)*.012:0));
+ return [ (n.w[0]*ct+(n.u[0]*ca+n.v[0]*sa)*st)*r,
+          (n.w[1]*ct+(n.u[1]*ca+n.v[1]*sa)*st)*r,
+          (n.w[2]*ct+(n.u[2]*ca+n.v[2]*sa)*st)*r ];
+}
+PILLARS.forEach(([id],i)=>{ const a=i/5*6.2832-1.2, lift=[.3,-.24,.34,-.3,.2][i];
+ seat(byNid[id],norm([Math.cos(a),lift,Math.sin(a)]),150,0,0,0); });
+SRCN.forEach(([id],i)=>seat(byNid[id],byNid["p-discovery"].w,262,[-1.35,.1,1.55][i]+hash(id)*.25,.95,0));
+const perP={}; TOOLN.forEach(([id,,pillar])=>{ perP[pillar]=perP[pillar]||[]; perP[pillar].push(id); });
+Object.entries(perP).forEach(([pillar,ids])=>ids.forEach((id,i)=>
+ seat(byNid[id],byNid[pillar].w,224,i/ids.length*6.2832+hash(id)*.7,.8,(hash(id)-.5)*.05)));
+const perS={}; DATA.forEach(g=>{ perS[g.src]=perS[g.src]||[]; perS[g.src].push(g.id); });
+Object.entries(perS).forEach(([src,ids])=>ids.forEach((id,i)=>
+ seat(byNid[id],byNid[srcNid[src]].w,356+hash(id)*84,i*2.399+hash(id+"a"),.5+hash(id+"t")*.65,(hash(id+"s")-.5)*.022)));
+NODES.filter(n=>n.kind==="tag").forEach(n=>{
+ const kin=[...ADJ[n.id]].map(id=>posAt(byNid[id],0));
+ const c=norm(kin.reduce((s,p)=>[s[0]+p[0],s[1]+p[1],s[2]+p[2]],[0,0,0.01]));
+ seat(n,c,264,hash(n.id)*6.28,.3+hash(n.id+"t")*.3,(hash(n.id+"s")-.5)*.03);
+});
+
+/* ── camera + canvas ── */
+const cosmo=$(".cosmo"), cv=$("#sky"), cx2=cv.getContext("2d");
+let W=0,H=0,DPR=1;
+function sizeCv(){ DPR=Math.min(2,devicePixelRatio||1); W=cosmo.clientWidth; H=cosmo.clientHeight;
+ cv.width=W*DPR; cv.height=H*DPR; cx2.setTransform(DPR,0,0,DPR,0,0); }
+const cam={yaw:-.55,pitch:.26,zoom:.92,vy:0,vp:0};
+const HOME={yaw:-.55,pitch:.26,zoom:.92};
+let sel=null,hov=null,fly=null,anim=null,lastInput=0,spin=!rm,active=false,raf=0,t0=performance.now();
+let term="",vis=new Set(["grant","tool","src","tag","pillar","og"]);
+const now=()=>rm?0:(performance.now()-t0)/1000;
+
+function project(p){
+ const cy=Math.cos(cam.yaw),sy=Math.sin(cam.yaw),cp=Math.cos(cam.pitch),sp=Math.sin(cam.pitch);
+ const x=p[0]*cy-p[2]*sy, z1=p[0]*sy+p[2]*cy;
+ const y=p[1]*cp-z1*sp,  z=p[1]*sp+z1*cp;
+ const f=1400/cam.zoom, k=f/(f-z), s=Math.min(W,H)/930;
+ return {x:W/2+x*k*s*930/430*.462, y:H/2+y*k*s*930/430*.462, k, z};
+}
+const sprites={};
+function sprite(col){ if(sprites[col]) return sprites[col];
+ const c=document.createElement("canvas"); c.width=c.height=64; const g=c.getContext("2d");
+ const rg=g.createRadialGradient(32,32,0,32,32,32);
+ rg.addColorStop(0,col+"cc"); rg.addColorStop(.35,col+"55"); rg.addColorStop(1,col+"00");
+ g.fillStyle=rg; g.fillRect(0,0,64,64); return sprites[col]=c; }
+const BGS=Array.from({length:110},(_,i)=>({x:hash("bx"+i),y:hash("by"+i),z:.3+hash("bz"+i)*.7,ph:hash("bp"+i)*6.28,sp:.4+hash("bs"+i)}));
+
+function focusF(n){
+ let f=1;
+ if(!vis.has(n.kind)) return 0;
+ if(sel){ f=Math.min(f,(n===sel||ADJ[sel.id].has(n.id))?1:.12); }
+ if(term){ f=Math.min(f,(n.label+" "+(n.desc||"")).toLowerCase().includes(term)?1:.12); }
+ return f;
+}
+
+function draw(){
+ const t=now();
+ const bg=cx2.createRadialGradient(W/2,H*.42,0,W/2,H*.42,Math.max(W,H)*.75);
+ bg.addColorStop(0,"#0C1710"); bg.addColorStop(.55,"#071009"); bg.addColorStop(1,"#030806");
+ cx2.fillStyle=bg; cx2.fillRect(0,0,W,H);
+ const ox=Math.sin(cam.yaw)*26, oy=Math.max(-40,Math.min(40,cam.pitch*34));
+ BGS.forEach(s=>{ const a=rm?.3:.16+.26*(.5+.5*Math.sin(t*s.sp+s.ph));
+  cx2.fillStyle=`rgba(240,234,214,${a})`;
+  cx2.fillRect((s.x*W+ox*s.z+W)%W,(s.y*H+oy*s.z+H)%H,s.z>.75?1.6:1,s.z>.75?1.6:1); });
+ const o=project([0,0,0]);
+ const neb=cx2.createRadialGradient(o.x,o.y,0,o.x,o.y,Math.min(W,H)*.5);
+ neb.addColorStop(0,"rgba(185,147,52,.10)"); neb.addColorStop(1,"rgba(185,147,52,0)");
+ cx2.fillStyle=neb; cx2.fillRect(0,0,W,H);
+
+ cx2.setLineDash([2,7]); cx2.strokeStyle="rgba(59,150,99,.14)"; cx2.lineWidth=1; cx2.beginPath();
+ for(let i=0;i<=64;i++){ const a=i/64*6.2832, q=project([Math.cos(a)*150,0,Math.sin(a)*150]);
+  i?cx2.lineTo(q.x,q.y):cx2.moveTo(q.x,q.y); }
+ cx2.stroke(); cx2.setLineDash([]);
+
+ const P={}; NODES.forEach(n=>P[n.id]={s:project(posAt(n,t)),f:focusF(n)});
+ EDGES.forEach(e=>{
+  const A=P[e.a],B=P[e.b]; const f=Math.min(A.f,B.f); if(f<=0) return;
+  const litSel=sel&&(e.a===sel.id||e.b===sel.id), litHov=hov&&(e.a===hov.id||e.b===hov.id);
+  const depth=.35+.65*((A.s.z+B.s.z)/2+390)/780;
+  if(litSel||litHov){ cx2.strokeStyle=`rgba(231,200,104,${.85*f})`; cx2.lineWidth=1.6;
+   cx2.beginPath(); cx2.moveTo(A.s.x,A.s.y); cx2.lineTo(B.s.x,B.s.y); cx2.stroke();
+   cx2.strokeStyle=`rgba(231,200,104,${.16*f})`; cx2.lineWidth=4.5;
+  }else{
+   const c=e.kind==="soft"?"196,178,142":"63,133,88";
+   cx2.strokeStyle=`rgba(${c},${(e.kind==="soft"?.2:.3)*depth*f})`; cx2.lineWidth=e.kind==="soft"?.8:1.1;
+  }
+  cx2.beginPath(); cx2.moveTo(A.s.x,A.s.y); cx2.lineTo(B.s.x,B.s.y); cx2.stroke();
+ });
+
+ [...NODES].sort((a,b)=>P[a.id].s.z-P[b.id].s.z).forEach(n=>{
+  const {s,f}=P[n.id]; if(f<=0) return;
+  const K=COL[n.kind]; let r=K.r*s.k*(Math.min(W,H)/430);
+  if(n.kind==="og") r*=1+(rm?0:.06*Math.sin(t*2));
+  const depth=.4+.6*(s.z+390)/780, al=depth*f;
+  cx2.globalAlpha=al;
+  const gs=r*(n.kind==="og"?7.5:5);
+  cx2.drawImage(sprite(K.g),s.x-gs/2,s.y-gs/2,gs,gs);
+  if(n.kind==="og"){
+   const L=r*6.5, fl=cx2.createLinearGradient(s.x-L,s.y,s.x+L,s.y);
+   fl.addColorStop(0,"rgba(231,200,104,0)"); fl.addColorStop(.5,"rgba(231,200,104,.55)"); fl.addColorStop(1,"rgba(231,200,104,0)");
+   cx2.strokeStyle=fl; cx2.lineWidth=1.1;
+   cx2.beginPath(); cx2.moveTo(s.x-L,s.y); cx2.lineTo(s.x+L,s.y);
+   cx2.moveTo(s.x,s.y-L*.8); cx2.lineTo(s.x,s.y+L*.8); cx2.stroke();
+   cx2.setLineDash([4,5]); cx2.lineDashOffset=-t*8;
+   cx2.strokeStyle="rgba(185,147,52,.6)"; cx2.lineWidth=1.4;
+   cx2.beginPath(); cx2.arc(s.x,s.y,r*2.15,0,6.2832); cx2.stroke(); cx2.setLineDash([]);
+  }
+  cx2.fillStyle=K.c; cx2.beginPath(); cx2.arc(s.x,s.y,r,0,6.2832); cx2.fill();
+  cx2.fillStyle="rgba(255,255,240,.9)"; cx2.beginPath(); cx2.arc(s.x-r*.25,s.y-r*.3,r*.32,0,6.2832); cx2.fill();
+  if(n.kind==="grant"){
+   const [cls]=stampFor(byId(n.ref));
+   if(cls!=="st-open"){ cx2.strokeStyle=STAMPCOL[cls]; cx2.lineWidth=1.6;
+    cx2.beginPath(); cx2.arc(s.x,s.y,r+3.4,0,6.2832); cx2.stroke(); }
+  }
+  if(n===sel){ cx2.setLineDash([3,4]); cx2.lineDashOffset=t*10;
+   cx2.strokeStyle="#E7C868"; cx2.lineWidth=1.5;
+   cx2.beginPath(); cx2.arc(s.x,s.y,r+8,0,6.2832); cx2.stroke(); cx2.setLineDash([]); }
+  cx2.globalAlpha=1;
+  const big=n.kind==="og"||n.kind==="pillar"||n.kind==="src";
+  const showL=n.kind==="og"||n===sel||n===hov||(term&&f===1)
+   ||(big&&cam.zoom>.8)||(cam.zoom>1.3&&s.k>1.02&&f===1);
+  if(showL){
+   cx2.font=n.kind==="og"?'700 15px Fraunces,Georgia,serif':'500 10px "IBM Plex Mono",Menlo,monospace';
+   cx2.textAlign="center";
+   const ly=s.y+r+(n.kind==="og"?20:13);
+   const txt=n.kind==="grant"?n.label.slice(0,26)+(n.label.length>26?"…":""):n.label;
+   cx2.lineWidth=3; cx2.strokeStyle="rgba(4,10,6,.75)"; cx2.strokeText(txt,s.x,ly);
+   cx2.fillStyle=n.kind==="og"?"#F0EAD6":`rgba(215,226,212,${Math.max(.55,al)})`;
+   cx2.fillText(txt,s.x,ly);
+  }
+  n._sx=s.x; n._sy=s.y; n._sr=r; n._sz=s.z; n._f=f;
+ });
+
+ const vg=cx2.createRadialGradient(W/2,H/2,Math.min(W,H)*.42,W/2,H/2,Math.max(W,H)*.72);
+ vg.addColorStop(0,"rgba(0,0,0,0)"); vg.addColorStop(1,"rgba(2,6,4,.42)");
+ cx2.fillStyle=vg; cx2.fillRect(0,0,W,H);
+}
+
+/* ── frame loop ── */
+function frame(){
+ if(!active) return;
+ if(fly){ const n=fly.n, p=posAt(n,now());
+  const ty=Math.atan2(p[0],p[2]), tp=Math.atan2(p[1],Math.hypot(p[0],p[2]));
+  let dy=ty-cam.yaw; dy=Math.atan2(Math.sin(dy),Math.cos(dy));
+  const u=Math.min(1,(performance.now()-fly.st)/650), e=u<.5?2*u*u:1-((-2*u+2)**2)/2;
+  cam.yaw+=dy*(.14+.2*e); cam.pitch+=(tp-cam.pitch)*(.14+.2*e); cam.zoom+=(1.42-cam.zoom)*.1;
+  if(u>=1&&Math.abs(dy)<.01) fly=null;
+ }else if(anim){ const u=Math.min(1,(performance.now()-anim.st)/420), e=1-(1-u)**3;
+  cam.yaw=anim.fy+(anim.ty-anim.fy)*e; cam.pitch=anim.fp+(anim.tp-anim.fp)*e; cam.zoom=anim.fz+(anim.tz-anim.fz)*e;
+  if(u>=1) anim=null;
+ }else{
+  cam.yaw-=cam.vy; cam.pitch-=cam.vp; cam.vy*=.94; cam.vp*=.94;
+  if(Math.abs(cam.vy)<1e-4) cam.vy=0; if(Math.abs(cam.vp)<1e-4) cam.vp=0;
+  if(spin&&!rm&&performance.now()-lastInput>3500&&!sel) cam.yaw-=.0016;
+ }
+ cam.pitch=Math.max(-1.3,Math.min(1.3,cam.pitch));
+ cam.zoom=Math.max(.62,Math.min(2,cam.zoom));
+ draw();
+ raf=requestAnimationFrame(frame);
+}
+
+/* ── input ── */
+const pts=new Map(); let downX=0,downY=0,downT=0,pinch0=0,lastTapN=null,lastTapT=0;
+cv.addEventListener("pointerdown",e=>{ cv.setPointerCapture(e.pointerId);
+ pts.set(e.pointerId,{x:e.clientX,y:e.clientY}); lastInput=performance.now();
+ downX=e.clientX; downY=e.clientY; downT=lastInput; cam.vy=cam.vp=0; fly=anim=null;
+ cv.classList.add("drag");
+ if(pts.size===2){ const [a,b]=[...pts.values()]; pinch0=Math.hypot(a.x-b.x,a.y-b.y); }});
+cv.addEventListener("pointermove",e=>{
+ if(!pts.has(e.pointerId)){ if(e.pointerType==="mouse"){ hov=pick(e); cv.style.cursor=hov?"pointer":"grab"; } return; }
+ const p=pts.get(e.pointerId), dx=e.clientX-p.x, dy=e.clientY-p.y;
+ p.x=e.clientX; p.y=e.clientY; lastInput=performance.now();
+ if(pts.size===2){ const [a,b]=[...pts.values()]; const d=Math.hypot(a.x-b.x,a.y-b.y);
+  if(pinch0){ cam.zoom*=d/pinch0; } pinch0=d; return; }
+ cam.yaw-=dx*2.6/W; cam.pitch-=dy*2/H; cam.vy=dx*2.6/W*.9; cam.vp=dy*2/H*.9;
+});
+function endPt(e){ pts.delete(e.pointerId); if(!pts.size) cv.classList.remove("drag"); pinch0=0;
+ const dt=performance.now()-downT, dist=Math.hypot(e.clientX-downX,e.clientY-downY);
+ if(dt<400&&dist<8){ cam.vy=cam.vp=0; const n=pick(e);
+  if(n){ if(n===lastTapN&&performance.now()-lastTapT<380){ flyTo(n); }
+   else{ select(n); } lastTapN=n; lastTapT=performance.now(); }
+  else{ sel=null; } } }
+cv.addEventListener("pointerup",endPt); cv.addEventListener("pointercancel",endPt);
+cv.addEventListener("pointerleave",()=>{ hov=null; cv.style.cursor="grab"; });
+cv.addEventListener("wheel",e=>{ e.preventDefault(); lastInput=performance.now();
+ cam.zoom*=Math.exp(-e.deltaY*.0012); },{passive:false});
+function pick(e){ const b=cv.getBoundingClientRect(), mx=e.clientX-b.left, my=e.clientY-b.top;
+ let best=null;
+ NODES.forEach(n=>{ if(n._f===undefined||n._f<=.12&&n.kind!=="og") return;
+  const rr=(n._sr||4)+12; if((mx-n._sx)**2+(my-n._sy)**2<rr*rr)
+   if(!best||n._sz>best._sz) best=n; });
+ return best; }
+function flyTo(n){ sel=n; fly={n,st:performance.now()}; lastInput=performance.now(); }
+function goHome(){ anim={fy:cam.yaw,fp:cam.pitch,fz:cam.zoom,ty:HOME.yaw,tp:HOME.pitch,tz:HOME.zoom,st:performance.now()};
+ sel=null; term=""; $("#gq").value=""; }
+
+/* ── wiki notes ── */
+function nb(id){ const n=byNid[id]; return `<button class="wl" data-wiki="${id}">${esc(n.label)}</button>`; }
+function select(n,quiet){
+ sel=n; if(quiet) return;
+ const links=EDGES.filter(e=>e.a===n.id).map(e=>e.b);
+ const backs=EDGES.filter(e=>e.b===n.id).map(e=>e.a);
+ let meta="",acts=`<button class="btn ghost" data-wiki-fly="${n.id}">Focus this star ⌖</button>`;
+ if(n.kind==="grant"){ const g=byId(n.ref), [cls,txt]=stampFor(g);
+  meta=`<div class="krow"><span class="k">Funder</span><span class="v">${esc(g.funder)}</span></div>
+   <div class="krow"><span class="k">Amount</span><span class="v" style="font-family:var(--mono)">${amtText(g)}</span></div>
+   <div class="krow"><span class="k">Deadline</span><span class="v">${g.due?"in "+daysLeft(g)+"d":"Rolling"}</span></div>
+   <div class="krow"><span class="k">Match</span><span class="v" style="font-family:var(--mono);color:var(--seal)">${match(g)} / 99</span></div>`;
+  acts=`<button class="btn" data-wiki-open="${n.ref}">Open funding slip →</button><div class="gap"></div>`+acts;
+ }else if(n.kind==="tool"){
+  meta=`<div class="krow"><span class="k">Pillar</span><span class="v">${esc(byNid[n.pillar].label)}</span></div>
+   <div class="krow"><span class="k">Call</span><span class="v" style="font-family:var(--mono);font-size:11.5px">${esc(n.cmd)}</span></div>`;
+  acts=`<button class="btn" data-wiki-run="${n.id}">Run in Console →</button><div class="gap"></div>`+acts;
+ }else if(n.kind==="src"){ const c=DATA.filter(g=>g.src===n.src).length;
+  meta=`<div class="krow"><span class="k">Records</span><span class="v" style="font-family:var(--mono)">${c} in corpus</span></div>`;
+  acts=`<button class="btn" data-wiki-src="${n.src}">Open in Discover →</button><div class="gap"></div>`+acts;
+ }else if(n.kind==="tag"){
+  acts=`<button class="btn" data-wiki-tag="${n.tag}">Filter Discover by ${esc(n.tag)} →</button><div class="gap"></div>`+acts;
+ }else if(n.kind==="og"){
+  meta=`<div class="krow"><span class="k">Stars</span><span class="v" style="font-family:var(--mono)">${NODES.length} · ${EDGES.length} links</span></div>
+   <div class="krow"><span class="k">Tracked</span><span class="v" style="font-family:var(--mono)">${Object.keys(state.tracked).length} in pipeline</span></div>`;
+ }
+ openSheet(`<div class="grab"></div><button class="xbtn" data-close aria-label="Close">✕</button>
+  <div class="ser" style="font:500 10.5px var(--mono);letter-spacing:.16em;color:var(--pdim)">✦ ${KINDLBL[n.kind].toUpperCase()} · KNOWLEDGE NOTE</div>
+  <h2>${esc(n.label)}</h2><p class="blurb">${esc(n.desc)}</p>${meta}
+  ${links.length?`<div class="wlh">Linked notes</div><div class="wls">${links.map(nb).join("")}</div>`:""}
+  ${backs.length?`<div class="wlh">Backlinks</div><div class="wls">${backs.map(id=>nb(id).replace('class="wl"','class="wl bk"')).join("")}</div>`:""}
+  <div class="gap"></div>${acts}`);
+}
+document.addEventListener("click",e=>{
+ const w=e.target.closest("[data-wiki]"); if(w){ const n=byNid[w.dataset.wiki]; select(n); flyTo(n); return; }
+ const f=e.target.closest("[data-wiki-fly]"); if(f){ closeSheet(); flyTo(byNid[f.dataset.wikiFly]); return; }
+ const g=e.target.closest("[data-wiki-open]"); if(g){ openSlip(g.dataset.wikiOpen); return; }
+ const r=e.target.closest("[data-wiki-run]"); if(r){ const n=byNid[r.dataset.wikiRun];
+  closeSheet(); nav("console"); $("#conIn").value=n.cmd; runCmd(); return; }
+ const s=e.target.closest("[data-wiki-src]"); if(s){ closeSheet(); state.f.src=s.dataset.wikiSrc; renderDiscover(); nav("discover"); return; }
+ const tg=e.target.closest("[data-wiki-tag]"); if(tg){ closeSheet(); state.f.tags=new Set([tg.dataset.wikiTag]); renderDiscover(); nav("discover"); return; }
+});
+
+/* ── filters + search + fabs ── */
+const KINDS=[["grant","Grants"],["tool","MCP tools"],["src","Sources"],["tag","Concepts"],["pillar","Pillars"]];
+function renderKinds(){ $("#gKinds").innerHTML=KINDS.map(([k,l])=>
+ `<button class="chip ${vis.has(k)?"on":""}" data-gkind="${k}">${l}<span class="ct">${NODES.filter(n=>n.kind===k).length}</span></button>`).join(""); }
+document.addEventListener("click",e=>{ const c=e.target.closest("[data-gkind]"); if(!c) return;
+ const k=c.dataset.gkind; vis.has(k)?vis.delete(k):vis.add(k);
+ if(![...vis].some(x=>x!=="og")) KINDS.forEach(([x])=>vis.add(x)); renderKinds(); });
+$("#gq").addEventListener("input",e=>{ term=e.target.value.trim().toLowerCase(); lastInput=performance.now(); });
+$("#gq").addEventListener("keydown",e=>{ if(e.key!=="Enter"||!term) return;
+ const m=NODES.find(n=>focusF(n)===1&&(n.label+" "+(n.desc||"")).toLowerCase().includes(term));
+ if(m){ select(m); flyTo(m); } });
+$("#gSpin").addEventListener("click",()=>{ spin=!spin; $("#gSpin").classList.toggle("off",!spin);
+ toast(spin?"Auto-rotate on":"Auto-rotate off"); lastInput=0; });
+$("#gHome").addEventListener("click",goHome);
+if(rm){ spin=false; $("#gSpin").classList.add("off"); }
+renderKinds();
+addEventListener("resize",()=>{ if(active){ sizeCv(); } });
+
+/* ── lifecycle ── */
+function onView(v){
+ const on=v==="graph";
+ if(on&&!active){ active=true; sizeCv(); lastInput=performance.now(); cancelAnimationFrame(raf); frame(); }
+ else if(!on&&active){ active=false; cancelAnimationFrame(raf); }
+}
+return {onView,select,flyTo,nodes:NODES,edges:EDGES};
+})();
+if(location.hash==="#graph") OGGraph.onView("graph");
+
+/* ── boot sequence (after graph build, so counts are live) ── */
+const BOOTL=["mounting corpus ………… "+DATA.length+" records ok","profile steward ……… ready","ranking agents ……… open-source bias on","drafting agents ……… grounded mode","mcp interface ………… stdio (simulated)","constellation ……… "+OGGraph.nodes.length+" stars linked","boot complete ✓"];
+if(rm){ $("#boot").classList.add("hide"); }
+else BOOTL.forEach((l,i)=>setTimeout(()=>{ $("#bootlog").textContent+=l+"\n";
+ if(i===BOOTL.length-1) setTimeout(()=>$("#boot").classList.add("hide"),480); },220*i+300));
+setTimeout(()=>$("#boot").classList.add("hide"),2600);
+</script>
 </body>
 </html>
