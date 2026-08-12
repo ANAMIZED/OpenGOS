@@ -3,14 +3,14 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "opengrants-os"
-version = "0.2.0"
-description = "OpenGrants OS — The ultimate open-source Autonomous Agentic AI MCP Server for grants discovery, matching, drafting, and lifecycle management, optimized for open-source AI and public goods."
+name = "opengos"
+version = "0.2.1"
+description = "OpenGOS — Autonomous Agentic AI MCP Server for grants discovery, ranking, drafting, and public-goods funding (open-source first)."
 readme = "README.md"
 requires-python = ">=3.11"
 license = "Apache-2.0"
 authors = [
-    { name = "OpenGrants Community", email = "opengrants@example.com" }
+    { name = "OpenGOS Community", email = "opengos@example.com" }
 ]
 keywords = [
     "mcp",
@@ -19,10 +19,9 @@ keywords = [
     "agentic",
     "open-source",
     "funding",
-    "langgraph",
     "public-goods",
-    "open-weight",
     "donations",
+    "opengos",
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -33,7 +32,6 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
-    "Topic :: Office/Business :: Financial",
 ]
 
 dependencies = [
@@ -49,14 +47,12 @@ dependencies = [
 agents = [
     "langgraph>=0.2.0",
     "langchain-core>=0.3.0",
-    "langchain-mcp-adapters>=0.1.0",
 ]
 dev = [
     "pytest>=8.0",
     "pytest-asyncio>=0.23",
     "ruff>=0.6",
-    "mypy>=1.11",
-    "hatch",
+    "build",
     "twine",
 ]
 
@@ -66,10 +62,14 @@ Repository = "https://github.com/ANAMIZED/opengrants-os"
 Issues = "https://github.com/ANAMIZED/opengrants-os/issues"
 
 [project.scripts]
+opengos = "opengrants.server:main"
 opengrants = "opengrants.server:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/opengrants"]
+
+[tool.hatch.build.targets.wheel.sources]
+"src" = ""
 
 [tool.hatch.build.targets.sdist]
 include = [
@@ -82,6 +82,3 @@ include = [
 [tool.ruff]
 line-length = 100
 target-version = "py311"
-
-[tool.ruff.lint]
-select = ["E", "F", "I", "UP", "B"]

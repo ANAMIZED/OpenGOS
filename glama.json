@@ -1,4 +1,8 @@
 {
-  "$schema": "https://glama.ai/mcp/schemas/server.json",
-  "maintainers": ["ANAMIZED"]
+  "name": "opengos",
+  "displayName": "OpenGOS",
+  "description": "Autonomous agentic MCP server for grants and public-goods funding — open-source first ranking, profile steward, grounded drafting.",
+  "repository": "https://github.com/ANAMIZED/opengrants-os",
+  "license": "Apache-2.0",
+  "version": "0.2.1"
 }
