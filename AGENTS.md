@@ -17,7 +17,7 @@ It treats traditional grants **and** donations/sponsorships as first-class fundi
 ## Repository layout
 
 ```
-src/opengrants/
+src/opengos/
   server.py          # MCP entry point (FastMCP) — primary interface
   grants_client.py   # Grants.gov client + normalization
   agents/            # Orchestration agents
@@ -37,8 +37,8 @@ docs/                # Human docs
 
 - Python **3.11+**
 - Package name on PyPI: `opengos`
-- Import path: `opengrants`
-- Entry point: `opengos` → `opengrants.server:main`
+- Import path: `opengos`
+- Entry point: `opengos` → `opengos.server:main`
 - MCP framework: **FastMCP**
 - Lint/format: `ruff`
 - Always preserve **provenance** (source + retrieved_at + official URL)
@@ -49,7 +49,7 @@ docs/                # Human docs
 ```bash
 pip install -e ".[dev]"
 opengos                    # starts MCP server on stdio
-python -m opengrants       # same
+python -m opengos          # same
 ```
 
 ## Boundaries (do not)
@@ -59,10 +59,11 @@ python -m opengrants       # same
 - Do not treat public-goods funding as second-class vs federal grants
 - Do not invent eligibility or award amounts — ground in source data
 - Keep the MCP tool surface clear and stable
+- Do not reintroduce legacy package naming
 
 ## Adding a new data source
 
-1. Create an adapter under `src/opengrants/sources/`
+1. Create an adapter under `src/opengos/sources/`
 2. Normalize into the shared opportunity / funding shape where possible
 3. Wire it into `server.py` as a new `@mcp.tool`
 4. Document it in README + `opengos://sources` resource

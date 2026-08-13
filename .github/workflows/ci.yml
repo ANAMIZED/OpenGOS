@@ -22,4 +22,4 @@ jobs:
       - name: Lint
         run: ruff check src || true
       - name: Import check
-        run: python -c "from opengrants.server import mcp; print('MCP server imports OK')"
+        run: python -c "from opengos.server import mcp; print('MCP server imports OK')"

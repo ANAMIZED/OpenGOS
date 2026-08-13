@@ -1,4 +1,4 @@
-# Multilingual Support — Strategic Value for OpenGrants
+# Multilingual Support — Strategic Value for OpenGOS
 
 ## Does multilingual add appeal & substance?
 
@@ -11,7 +11,7 @@ Public-goods and grant funding is global. Major non-English ecosystems include:
 - **Asia**: Japan, South Korea, Singapore, India public research and open-source programs
 - **Africa & Global South**: Growing public-interest technology and digital public goods funding
 
-### Why it matters for OpenGrants specifically
+### Why it matters for OpenGOS specifically
 
 1. **Discovery surface** — Many high-value opportunities never appear in English-only searches.
 2. **Equity** — Open-source AI maintainers outside the Anglosphere face an even steeper discovery tax.
@@ -34,4 +34,4 @@ Public-goods and grant funding is global. Major non-English ecosystems include:
 - Full localization of the MCP tool descriptions and status resources  
 - Community-maintained translation of the public-goods catalog
 
-Adding multilingual capability moves OpenGrants from “excellent English-language tool” to “global public-goods funding infrastructure” — exactly the positioning needed to reach top 0.01% status.
+Adding multilingual capability moves OpenGOS from “excellent English-language tool” to “global public-goods funding infrastructure.”

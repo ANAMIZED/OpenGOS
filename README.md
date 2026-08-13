@@ -4,7 +4,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![MCP](https://img.shields.io/badge/MCP-Server-purple.svg)](https://modelcontextprotocol.io)
-[![Version](https://img.shields.io/badge/Version-0.3.1-green.svg)]()
+[![Version](https://img.shields.io/badge/Version-0.4.0-green.svg)]()
 [![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)]()
 [![GitHub](https://img.shields.io/badge/GitHub-ANAMIZED%2FOpenGOS-black.svg)](https://github.com/ANAMIZED/OpenGOS)
 
@@ -50,7 +50,7 @@ No install. Browser-only. Discover · Constellation · Pipeline · Draft · Prof
 
 ## Install & Run (MCP Server)
 
-### Option A — From source (recommended while alpha)
+### From source (recommended while alpha)
 
 ```bash
 git clone https://github.com/ANAMIZED/OpenGOS.git
@@ -61,10 +61,10 @@ pip install -e ".[dev]"
 opengos
 ```
 
-### Option B — Module form
+### Module form
 
 ```bash
-python -m opengrants
+python -m opengos
 ```
 
 ### MCP client config
@@ -87,7 +87,7 @@ Or:
   "mcpServers": {
     "opengos": {
       "command": "python",
-      "args": ["-m", "opengrants"],
+      "args": ["-m", "opengos"],
       "cwd": "/absolute/path/to/OpenGOS"
     }
   }
@@ -140,8 +140,6 @@ Every opportunity carries **provenance**: source, retrieved_at, official URL.
 
 ## Agent discoverability
 
-This repo is designed for AI agents:
-
 | File | Purpose |
 |------|--------|
 | `AGENTS.md` | Conventions and boundaries for coding agents |
@@ -157,7 +155,6 @@ This repo is designed for AI agents:
 pip install -e ".[dev,agents]"
 ruff check src
 ruff format src
-pytest   # when tests are present
 ```
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
@@ -171,14 +168,6 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 | PyPI | `opengos` |
 | MCP Registry | `io.github.ANAMIZED/opengos` |
 | Glama | `glama.json` |
-
----
-
-## Support
-
-- GitHub Sponsors
-- Open Collective (set your slug in `.github/FUNDING.yml`)
-- See `docs/DOGFOODING.md`
 
 ---
 

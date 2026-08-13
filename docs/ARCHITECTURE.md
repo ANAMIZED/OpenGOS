@@ -13,7 +13,7 @@
 Agent / Client
       │
       ▼
- FastMCP Server  (src/opengrants/server.py)
+ FastMCP Server  (src/opengos/server.py)
       │
       ├─► Grants.gov client     (grants_client.py)
       ├─► NSF adapter           (sources/nsf.py)
@@ -55,7 +55,7 @@ Agent / Client
 
 ## Extension points
 
-- New source adapters under `src/opengrants/sources/`
+- New source adapters under `src/opengos/sources/`
 - New MCP tools in `server.py`
-- Ranking / agent logic under `src/opengrants/agents/`
-- Evaluation cases under `src/opengrants/evaluation/`
+- Ranking / agent logic under `src/opengos/agents/`
+- Evaluation cases under `src/opengos/evaluation/`

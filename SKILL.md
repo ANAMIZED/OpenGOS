@@ -11,7 +11,7 @@ license: Apache-2.0
 metadata:
   author: ANAMIZED
   repository: https://github.com/ANAMIZED/OpenGOS
-  version: "0.3.1"
+  version: "0.4.0"
   mcp: true
 ---
 

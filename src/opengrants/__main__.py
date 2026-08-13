@@ -1,6 +1,14 @@
-"""Allow running as python -m opengrants"""
+"""Deprecated. Use: python -m opengos"""
 
-from opengrants.server import main
+import warnings
+
+warnings.warn(
+    "python -m opengrants is deprecated. Use python -m opengos",
+    DeprecationWarning,
+    stacklevel=2,
+)
+
+from opengos.server import main
 
 if __name__ == "__main__":
     main()

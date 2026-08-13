@@ -26,12 +26,13 @@ Run the MCP server:
 ```bash
 opengos
 # or
-python -m opengrants
+python -m opengos
 ```
 
 ## Code style
 
 - Python 3.11+
+- Package import path: `opengos`
 - `ruff` for linting and formatting
 - Type hints encouraged
 - Strong **provenance** and grounding for any funding-related claim
@@ -52,6 +53,7 @@ Key rules:
 2. Every opportunity should carry source + timestamp + official URL
 3. Do not invent eligibility or award amounts
 4. Prefer small, focused PRs
+5. Do not reintroduce legacy package naming
 
 ## Pull request process
 

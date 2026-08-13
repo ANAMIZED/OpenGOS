@@ -1,3 +1,16 @@
-"""OpenGOS — Autonomous Agentic AI MCP Server for grants and public-goods funding."""
+"""Deprecated package path.
 
-__version__ = "0.3.1"
+This project was renamed to OpenGOS. Import from `opengos` instead.
+
+    from opengos.server import main
+"""
+
+import warnings
+
+warnings.warn(
+    "The 'opengrants' package path is deprecated. Use 'opengos' instead.",
+    DeprecationWarning,
+    stacklevel=2,
+)
+
+from opengos import __version__  # noqa: F401,E402

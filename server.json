@@ -6,12 +6,12 @@
     "url": "https://github.com/ANAMIZED/OpenGOS",
     "source": "github"
   },
-  "version": "0.3.1",
+  "version": "0.4.0",
   "packages": [
     {
       "registryType": "pypi",
       "identifier": "opengos",
-      "version": "0.3.1",
+      "version": "0.4.0",
       "transport": { "type": "stdio" }
     }
   ]
