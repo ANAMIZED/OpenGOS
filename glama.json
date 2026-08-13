@@ -1,8 +1,8 @@
 {
   "name": "opengos",
   "displayName": "OpenGOS",
-  "description": "Autonomous agentic MCP server for grants and public-goods funding — open-source first ranking, profile steward, grounded drafting.",
+  "description": "Autonomous agentic MCP server for grants and public-goods funding — open-source first ranking, profile steward, grounded drafting, full provenance.",
   "repository": "https://github.com/ANAMIZED/OpenGOS",
   "license": "Apache-2.0",
-  "version": "0.3.0"
+  "version": "0.3.1"
 }

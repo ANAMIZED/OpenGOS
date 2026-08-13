@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "opengos"
-version = "0.3.0"
+version = "0.3.1"
 description = "OpenGOS — Autonomous Agentic AI MCP Server for grants discovery, ranking, drafting, and public-goods funding."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -14,7 +14,7 @@ authors = [
 ]
 keywords = [
     "mcp", "grants", "ai", "agentic", "open-source", "funding",
-    "public-goods", "donations", "opengos",
+    "public-goods", "donations", "opengos", "agents",
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -44,6 +44,7 @@ dev = ["pytest>=8.0", "pytest-asyncio>=0.23", "ruff>=0.6", "build", "twine"]
 Homepage = "https://github.com/ANAMIZED/OpenGOS"
 Repository = "https://github.com/ANAMIZED/OpenGOS"
 Issues = "https://github.com/ANAMIZED/OpenGOS/issues"
+Documentation = "https://github.com/ANAMIZED/OpenGOS#readme"
 
 [project.scripts]
 opengos = "opengrants.server:main"
@@ -55,7 +56,7 @@ packages = ["src/opengrants"]
 "src" = ""
 
 [tool.hatch.build.targets.sdist]
-include = ["/src", "/README.md", "/LICENSE", "/pyproject.toml"]
+include = ["/src", "/README.md", "/LICENSE", "/pyproject.toml", "/AGENTS.md", "/SKILL.md"]
 
 [tool.ruff]
 line-length = 100

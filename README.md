@@ -1,32 +1,38 @@
 # OpenGOS
 
-**Open-source Autonomous Agentic AI MCP Server for grants, public-goods funding, and open-source sustainability.**
+**Autonomous agentic MCP server for grants discovery, ranking, drafting, and public-goods funding.**
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![MCP](https://img.shields.io/badge/MCP-Server-purple.svg)](https://modelcontextprotocol.io)
-[![Version](https://img.shields.io/badge/Version-0.3-green.svg)]()
+[![Version](https://img.shields.io/badge/Version-0.3.1-green.svg)]()
+[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)]()
 [![GitHub](https://img.shields.io/badge/GitHub-ANAMIZED%2FOpenGOS-black.svg)](https://github.com/ANAMIZED/OpenGOS)
 
 > Eliminate the discovery tax. Treat traditional grants **and** donations / sponsorships / quadratic funding as equal first-class citizens so open-source projects can compete on a level playing field.
 
-## Try it now
+---
+
+## Try it in 10 seconds
 
 **[Launch the interactive shell →](https://htmlpreview.github.io/?https://github.com/ANAMIZED/OpenGOS/blob/main/opengos.html)**
 
-Discover · Constellation (3D knowledge graph) · Pipeline · Draft · Console · Profile — one HTML file. No install required.
+No install. Browser-only. Discover · Constellation · Pipeline · Draft · Profile.
 
-Source: [`opengos.html`](opengos.html)
-
-Catalog baseline: **August 2026** (illustrative — always verify with the funder).
+---
 
 ## Why OpenGOS?
 
-- A **first-class MCP Server** any agent (Claude, Cursor, custom agents) can call
-- Discovery → ranking → drafting → evaluation with a **declared open-source bias**
-- **Public-goods funding** (sponsors, collectives, quadratic) as first-class citizens
-- Apache 2.0, self-hostable, provenance-first
+| Problem | OpenGOS approach |
+|---------|------------------|
+| Grant discovery is slow and fragmented | Live Grants.gov + NSF + public-goods catalog in one MCP interface |
+| Open-source projects are under-served by traditional grants | Explicit open-source ranking bias |
+| Donations/sponsorships treated as second-class | Public-goods funding is a first-class citizen |
+| Agents can't easily call funding tools | Native **MCP server** any agent can use |
+| Drafts are ungrounded | Proposal outlines tied to real opportunities + provenance |
 
-## Features (v0.3)
+---
+
+## Features
 
 | Capability | Status |
 |------------|--------|
@@ -35,20 +41,33 @@ Catalog baseline: **August 2026** (illustrative — always verify with the funde
 | Public-goods / donation sources | ✅ |
 | Profile Steward | ✅ |
 | Grounded proposal drafting | ✅ |
-| Continuous ingestion + evaluation harness | ✅ |
-| Ranking with declared open-source bias | ✅ |
-| Interactive shell + 3D Constellation | ✅ |
+| Continuous ingestion + evaluation | ✅ |
+| Open-source biased ranking | ✅ |
+| Interactive HTML shell + 3D graph | ✅ |
+| Agent-native (`AGENTS.md` + `SKILL.md` + MCP) | ✅ |
 
-## Quick Start (MCP Server)
+---
+
+## Install & Run (MCP Server)
+
+### Option A — From source (recommended while alpha)
 
 ```bash
 git clone https://github.com/ANAMIZED/OpenGOS.git
 cd OpenGOS
-pip install -e .
+python -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -e ".[dev]"
 opengos
 ```
 
-### MCP Client Config
+### Option B — Module form
+
+```bash
+python -m opengrants
+```
+
+### MCP client config
 
 ```json
 {
@@ -61,7 +80,7 @@ opengos
 }
 ```
 
-Or via module:
+Or:
 
 ```json
 {
@@ -75,6 +94,8 @@ Or via module:
 }
 ```
 
+---
+
 ## MCP Tools
 
 | Tool | Description |
@@ -82,41 +103,91 @@ Or via module:
 | `search_grants` | Live Grants.gov keyword search with provenance |
 | `get_grant_details` | Detail view for a specific opportunity |
 | `list_open_source_relevant_grants` | Open-source biased discovery |
-| `list_public_goods_funding` | Donations, sponsorships, quadratic & open-source funds |
+| `list_public_goods_funding` | Donations, sponsorships, quadratic & OS funds |
 | `search_nsf_awards` | NSF Awards public API |
 | `refresh_corpus` | Continuous ingestion into local corpus |
 | `run_evaluation` | Discovery + open-source relevance harness |
 | `upsert_profile` | Create / update project profile |
 | `draft_proposal_outline` | Grounded outline (grants and public-goods vehicles) |
 
+### MCP Resources
+
+| Resource | Description |
+|----------|-------------|
+| `opengos://status` | Server name, version, philosophy |
+| `opengos://sources` | Data sources and public-goods catalog |
+
+---
+
 ## Architecture
 
 ```
-MCP Interface
-    ↓
-Discovery (Grants.gov · NSF · Public-Goods Catalog)
-    ↓
-Profile Steward → Ranking Agents → Drafting Agents
-    ↓
+MCP Interface (FastMCP)
+        ↓
+┌───────────────────────────────────────┐
+│  Discovery                            │
+│  Grants.gov · NSF · Public-Goods      │
+└───────────────────────────────────────┘
+        ↓
+Profile Steward → Ranking → Drafting
+        ↓
 Evaluation & Continuous Corpus
 ```
+
+Every opportunity carries **provenance**: source, retrieved_at, official URL.
+
+---
+
+## Agent discoverability
+
+This repo is designed for AI agents:
+
+| File | Purpose |
+|------|--------|
+| `AGENTS.md` | Conventions and boundaries for coding agents |
+| `SKILL.md` | Skill description for agent skill discovery |
+| `server.json` | MCP registry metadata |
+| `glama.json` | Glama MCP index metadata |
+
+---
+
+## Development
+
+```bash
+pip install -e ".[dev,agents]"
+ruff check src
+ruff format src
+pytest   # when tests are present
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+---
+
+## Publishing
+
+| Channel | Identifier |
+|---------|------------|
+| PyPI | `opengos` |
+| MCP Registry | `io.github.ANAMIZED/opengos` |
+| Glama | `glama.json` |
+
+---
 
 ## Support
 
 - GitHub Sponsors
-- Open Collective (update `.github/FUNDING.yml` with your slug)
+- Open Collective (set your slug in `.github/FUNDING.yml`)
 - See `docs/DOGFOODING.md`
 
-## Publishing
-
-- PyPI: **`opengos`**
-- MCP Registry: `io.github.ANAMIZED/opengos`
-- Glama: `glama.json`
+---
 
 ## License
 
 Apache License 2.0 — see [LICENSE](LICENSE).
 
 ---
+
+Built for open-source AI, public goods, and the agentic funding stack.
 
 https://github.com/ANAMIZED/OpenGOS

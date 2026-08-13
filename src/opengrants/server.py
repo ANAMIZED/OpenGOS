@@ -24,7 +24,8 @@ mcp = FastMCP(
         "OpenGOS is an autonomous agentic MCP server specialized in "
         "grant discovery, ranking, eligibility analysis, drafting, and lifecycle support. "
         "It prioritizes open-source software and public-goods funding, including donations, "
-        "sponsorships, and quadratic funding vehicles. Every result includes provenance."
+        "sponsorships, and quadratic funding vehicles. Every result includes provenance. "
+        "Treat public-goods funding as first-class, not secondary to federal grants."
     ),
 )
 
@@ -37,7 +38,11 @@ def _serialize(g: GrantOpportunity, include_raw: bool = False) -> dict[str, Any]
 
 @mcp.tool
 async def search_grants(keyword: str, max_results: int = 15, status: str = "posted") -> str:
-    """Search open U.S. federal grant opportunities (Grants.gov) by keyword with provenance."""
+    """Search open U.S. federal grant opportunities (Grants.gov) by keyword with provenance.
+
+    Returns normalized opportunities including source, retrieved_at, and official URL.
+    Always verify details on the official source_url before acting.
+    """
     if not keyword or not keyword.strip():
         return json.dumps({"error": "keyword is required"}, indent=2)
     client = await get_client()
@@ -57,7 +62,10 @@ async def search_grants(keyword: str, max_results: int = 15, status: str = "post
 
 @mcp.tool
 async def get_grant_details(opportunity_id: str) -> str:
-    """Retrieve details for a specific grant opportunity by ID."""
+    """Retrieve details for a specific grant opportunity by ID or opportunity number.
+
+    Includes full provenance and raw fields when available.
+    """
     if not opportunity_id or not opportunity_id.strip():
         return json.dumps({"error": "opportunity_id is required"}, indent=2)
     client = await get_client()
@@ -71,7 +79,9 @@ async def get_grant_details(opportunity_id: str) -> str:
     if not match and results:
         match = results[0]
     if not match:
-        return json.dumps({"error": "Opportunity not found", "opportunity_id": opportunity_id}, indent=2)
+        return json.dumps(
+            {"error": "Opportunity not found", "opportunity_id": opportunity_id}, indent=2
+        )
     return json.dumps(
         {
             "opportunity": _serialize(match, include_raw=True),
@@ -90,7 +100,10 @@ async def get_grant_details(opportunity_id: str) -> str:
 async def list_open_source_relevant_grants(
     focus: str = "open source artificial intelligence", max_results: int = 12
 ) -> str:
-    """Discover grants particularly relevant to open-source software and public goods."""
+    """Discover grants particularly relevant to open-source software and public goods.
+
+    Applies a declared open-source ranking bias across multiple keyword searches.
+    """
     keywords = [
         focus,
         "open source artificial intelligence",
@@ -126,7 +139,10 @@ async def list_open_source_relevant_grants(
 
 @mcp.tool
 async def list_public_goods_funding(max_results: int = 25) -> str:
-    """List public-goods funding vehicles: sponsorships, collectives, quadratic rounds, open-source funds."""
+    """List public-goods funding vehicles: sponsorships, collectives, quadratic rounds, open-source funds.
+
+    These are first-class funding paths alongside traditional grants.
+    """
     try:
         from opengrants.sources.public_goods import list_catalog
 
@@ -152,8 +168,16 @@ async def search_nsf_awards(keyword: str, max_results: int = 15) -> str:
 
         results = await search_nsf(keyword=keyword, limit=max_results)
     except Exception as e:
-        return json.dumps({"error": str(e), "hint": "NSF public API may be temporarily unavailable"}, indent=2)
-    return json.dumps({"query": keyword, "count": len(results), "awards": results}, indent=2, default=str)
+        return json.dumps(
+            {
+                "error": str(e),
+                "hint": "NSF public API may be temporarily unavailable",
+            },
+            indent=2,
+        )
+    return json.dumps(
+        {"query": keyword, "count": len(results), "awards": results}, indent=2, default=str
+    )
 
 
 @mcp.tool
@@ -182,11 +206,18 @@ async def run_evaluation() -> str:
 
 @mcp.tool
 async def upsert_profile(name: str, pitch: str = "", tags: str = "open-source") -> str:
-    """Create or update the project profile used for ranking and grounded drafts."""
+    """Create or update the project profile used for ranking and grounded drafts.
+
+    Tags should be comma-separated (e.g. "open-source, ai, infrastructure").
+    """
     try:
         from opengrants.profile.steward import upsert
 
-        profile = upsert(name=name, pitch=pitch, tags=[t.strip() for t in tags.split(",") if t.strip()])
+        profile = upsert(
+            name=name,
+            pitch=pitch,
+            tags=[t.strip() for t in tags.split(",") if t.strip()],
+        )
         return json.dumps({"status": "ok", "profile": profile}, indent=2, default=str)
     except Exception as e:
         return json.dumps({"error": str(e)}, indent=2)
@@ -194,7 +225,10 @@ async def upsert_profile(name: str, pitch: str = "", tags: str = "open-source") 
 
 @mcp.tool
 async def draft_proposal_outline(opportunity_id: str, project_name: str = "") -> str:
-    """Build a grounded proposal outline for a grant or public-goods funding vehicle."""
+    """Build a grounded proposal outline for a grant or public-goods funding vehicle.
+
+    The outline should reference real opportunity data rather than inventing claims.
+    """
     try:
         from opengrants.drafting.drafter import outline
 
@@ -209,7 +243,7 @@ def status() -> str:
     return json.dumps(
         {
             "name": "OpenGOS",
-            "version": "0.3.0",
+            "version": "0.3.1",
             "transport": "stdio",
             "philosophy": "Public-good first. Strong provenance. Declared open-source ranking bias.",
         },
@@ -241,7 +275,7 @@ def data_sources() -> str:
 
 
 def main() -> None:
-    logger.info("Starting OpenGOS MCP Server v0.3.0")
+    logger.info("Starting OpenGOS MCP Server v0.3.1")
     mcp.run()
 
 

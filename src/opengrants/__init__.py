@@ -1,3 +1,3 @@
-"""OpenGrants OS — Autonomous Agentic AI MCP Server for open-source grants."""
+"""OpenGOS — Autonomous Agentic AI MCP Server for grants and public-goods funding."""
 
-__version__ = "0.2.0"
+__version__ = "0.3.1"
