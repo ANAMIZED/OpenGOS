@@ -10,6 +10,8 @@
 
 > Eliminate the discovery tax. Treat traditional grants **and** donations / sponsorships / quadratic funding as equal first-class citizens so open-source projects can compete on a level playing field.
 
+**[OpenGOS Pro — $49/mo](https://buy.stripe.com/test_9B65kD60D31e3WVaPVbAs01)** · **[Support Public Goods](https://donate.stripe.com/test_28E8wP60D9pC9hf1flbAs00)**
+
 ---
 
 ## 🚀 Try it in 10 seconds (Hero Demo)
