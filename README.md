@@ -10,7 +10,7 @@
 
 > Eliminate the discovery tax. Treat traditional grants **and** donations / sponsorships / quadratic funding as equal first-class citizens so open-source projects can compete on a level playing field.
 
-**[OpenGOS Pro — $49/mo](https://buy.stripe.com/7sY8wQ5EWf1H3p3bby43S01)** · **[Support Public Goods](https://donate.stripe.com/00w5kE3wOg5L8Jn2F243S00)**
+**[OpenGOS Pro — $49/mo](https://buy.stripe.com/7sY8wQ5EWf1H3p3bby43S01)** · **[Support Agentic OS Kernels ($99)](https://buy.stripe.com/bJecN63wObPv6Bf7Zm43S02)** · **[Support Public Goods](https://donate.stripe.com/00w5kE3wOg5L8Jn2F243S00)**
 
 ### Non-custodial USDC (preferred for agents)
 
@@ -28,7 +28,7 @@
 
 No install. Browser-only. Discover · Constellation · Pipeline · Draft · Profile.
 
-*Related:* [LRSI](https://github.com/ANAMIZED/LRSI) (recursive self-improvement kernel) · [server-os](https://github.com/ANAMIZED/server-os) (agent process runtime) · [x402-cloudflare-starter](https://github.com/ANAMIZED/x402-cloudflare-starter) (agent micropayments)
+*Related:* [rui](https://github.com/ANAMIZED/rui) · [LRSI](https://github.com/ANAMIZED/LRSI) · [server-os](https://github.com/ANAMIZED/server-os) · [openmesha](https://github.com/ANAMIZED/openmesha) · [x402-cloudflare-starter](https://github.com/ANAMIZED/x402-cloudflare-starter)
 
 ---
 
@@ -62,24 +62,15 @@ No install. Browser-only. Discover · Constellation · Pipeline · Draft · Prof
 
 ## Install & Run (MCP Server)
 
-### From source (recommended while alpha)
-
 ```bash
 git clone https://github.com/ANAMIZED/OpenGOS.git
 cd OpenGOS
-python -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
+python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 opengos
 ```
 
-### Module form
-
-```bash
-python -m opengos
-```
-
-### MCP client config
+MCP client config:
 
 ```json
 {
@@ -91,22 +82,6 @@ python -m opengos
   }
 }
 ```
-
-Or:
-
-```json
-{
-  "mcpServers": {
-    "opengos": {
-      "command": "python",
-      "args": ["-m", "opengos"],
-      "cwd": "/absolute/path/to/OpenGOS"
-    }
-  }
-}
-```
-
----
 
 ## MCP Tools
 
@@ -122,72 +97,9 @@ Or:
 | `upsert_profile` | Create / update project profile |
 | `draft_proposal_outline` | Grounded outline (grants and public-goods vehicles) |
 
-### MCP Resources
-
-| Resource | Description |
-|----------|-------------|
-| `opengos://status` | Server name, version, philosophy |
-| `opengos://sources` | Data sources and public-goods catalog |
-
----
-
-## Architecture
-
-```
-MCP Interface (FastMCP)
-        ↓
-┌────────────────────────────────────────┐
-│  Discovery                            │
-│  Grants.gov · NSF · Public-Goods      │
-└────────────────────────────────────────┘
-        ↓
-Profile Steward → Ranking → Drafting
-        ↓
-Evaluation & Continuous Corpus
-```
-
-Every opportunity carries **provenance**: source, retrieved_at, official URL.
-
----
-
-## Agent discoverability
-
-| File | Purpose |
-|------|--------|
-| `AGENTS.md` | Conventions and boundaries for coding agents |
-| `SKILL.md` | Skill description for agent skill discovery |
-| `server.json` | MCP registry metadata |
-| `glama.json` | Glama MCP index metadata |
-
----
-
-## Development
-
-```bash
-pip install -e ".[dev,agents]"
-ruff check src
-ruff format src
-```
-
-See [CONTRIBUTING.md](CONTRIBUTING.md).
-
----
-
-## Publishing
-
-| Channel | Identifier |
-|---------|------------|
-| PyPI | `opengos` |
-| MCP Registry | `io.github.ANAMIZED/opengos` |
-| Glama | `glama.json` |
-
----
-
 ## License
 
 Apache License 2.0 — see [LICENSE](LICENSE).
-
----
 
 Built for open-source AI, public goods, and the agentic funding stack.
 
