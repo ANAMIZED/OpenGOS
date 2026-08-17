@@ -12,11 +12,13 @@
 
 ---
 
-## Try it in 10 seconds
+## 🚀 Try it in 10 seconds (Hero Demo)
 
 **[Launch the interactive shell →](https://htmlpreview.github.io/?https://github.com/ANAMIZED/OpenGOS/blob/main/opengos.html)**
 
 No install. Browser-only. Discover · Constellation · Pipeline · Draft · Profile.
+
+*Related:* [LRSI](https://github.com/ANAMIZED/LRSI) (recursive self-improvement kernel) · [server-os](https://github.com/ANAMIZED/server-os) (agent process runtime) · [x402-cloudflare-starter](https://github.com/ANAMIZED/x402-cloudflare-starter) (agent micropayments)
 
 ---
 
@@ -124,10 +126,10 @@ Or:
 ```
 MCP Interface (FastMCP)
         ↓
-┌───────────────────────────────────────┐
+┌────────────────────────────────────────┐
 │  Discovery                            │
 │  Grants.gov · NSF · Public-Goods      │
-└───────────────────────────────────────┘
+└────────────────────────────────────────┘
         ↓
 Profile Steward → Ranking → Drafting
         ↓
