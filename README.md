@@ -10,9 +10,16 @@
 
 **Autonomous agentic MCP server for grants discovery, ranking, drafting, and public-goods funding.**
 
-**[OpenGOS Pro — $49/mo](https://buy.stripe.com/7sY8wQ5EWf1H3p3bby43S01)** · **[Support Agentic OS Kernels ($99)](https://buy.stripe.com/bJecN63wObPv6Bf7Zm43S02)** · **[Support Public Goods](https://donate.stripe.com/00w5kE3wOg5L8Jn2F243S00)**
+**[OpenGOS Pro — $49/mo](https://buy.stripe.com/7sY8wQ5EWf1H3p3bby43S01)** · **[OpenGOS Advanced Search ($0.40)](https://buy.stripe.com/7sY8wQ5EW3iZ5xb5Re43S06)** · **[OpenGOS Proposal Draft ($2.50)](https://buy.stripe.com/9B69AUd7o7zf2kZ2F243S03)** · **[Support Agentic OS Kernels ($99)](https://buy.stripe.com/bJecN63wObPv6Bf7Zm43S02)** · **[Support Public Goods](https://donate.stripe.com/00w5kE3wOg5L8Jn2F243S00)** · **[Consulting Hour ($199)](https://buy.stripe.com/dRmaEYgjA9Hnf7LdjG43S0b)**
 
-*Related:* [rui](https://github.com/ANAMIZED/rui) · [LRSI](https://github.com/ANAMIZED/LRSI) · [server-os](https://github.com/ANAMIZED/server-os) · [openmesha](https://github.com/ANAMIZED/openmesha)
+### Non-custodial USDC (preferred for agents / x402)
+
+| Network | Address |
+|---------|---------|
+| **Base / Ethereum** | `0xD3d0E9eDAe3Ac7bb199a8EAA761BdA423b878438` |
+| **Solana** | `ETQwWf19axArsY493UfC6bxe2BmEzmzvCb58PPnC38A` |
+
+*Related:* [rui](https://github.com/ANAMIZED/rui) · [LRSI](https://github.com/ANAMIZED/LRSI) · [server-os](https://github.com/ANAMIZED/server-os) · [openmesha](https://github.com/ANAMIZED/openmesha) · [YodMCP](https://github.com/ANAMIZED/YodMCP)
 
 ## Surfaces
 
