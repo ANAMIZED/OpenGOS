@@ -1,18 +1,21 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.ANAMIZED/opengos",
-  "description": "OpenGOS — Autonomous Agentic AI MCP Server for grants discovery, ranking, drafting, and public-goods funding. Open-source first. Provenance-first.",
+  "description": "Grants and public-goods MCP: discovery, ranking, grounded drafting, open-source first.",
   "repository": {
     "url": "https://github.com/ANAMIZED/OpenGOS",
     "source": "github"
   },
   "version": "0.4.0",
+  "websiteUrl": "https://github.com/ANAMIZED/OpenGOS",
   "packages": [
     {
       "registryType": "pypi",
       "identifier": "opengos",
       "version": "0.4.0",
-      "transport": { "type": "stdio" }
+      "transport": {
+        "type": "stdio"
+      }
     }
   ]
 }
