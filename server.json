@@ -7,15 +7,5 @@
     "source": "github"
   },
   "version": "0.4.0",
-  "websiteUrl": "https://github.com/ANAMIZED/OpenGOS",
-  "packages": [
-    {
-      "registryType": "pypi",
-      "identifier": "opengos",
-      "version": "0.4.0",
-      "transport": {
-        "type": "stdio"
-      }
-    }
-  ]
+  "websiteUrl": "https://github.com/ANAMIZED/OpenGOS"
 }
