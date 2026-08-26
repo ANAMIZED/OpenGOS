@@ -1,8 +1,16 @@
-# Glama release — OpenGOS
+# Glama Dockerfile admin — OpenGOS
 
-| Field | Value |
-| --- | --- |
-| Build steps | `["pip install --no-cache-dir ."]` |
-| CMD arguments | `["python", "-m", "opengos"]` |
-| Environment variables JSON schema | `{\"type\":\"object\",\"properties\":{},\"required\":[]}` |
-| Placeholders | `{}` |
+Sync Server. Pinned SHA empty.
+
+Build steps:
+```json
+["python3 -m pip install --break-system-packages --no-cache-dir ."]
+```
+
+CMD arguments:
+```json
+["python3", "-m", "opengos"]
+```
+
+Env schema: `{"type":"object","properties":{},"required":[]}`
+Placeholders: `{}`
