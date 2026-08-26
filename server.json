@@ -1,11 +1,23 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.ANAMIZED/opengos",
-  "description": "Grants and public-goods MCP: discovery, ranking, grounded drafting, open-source first.",
+  "title": "OpenGOS",
+  "description": "Grants and public-goods MCP: discovery, ranking, grounded drafting.",
   "repository": {
     "url": "https://github.com/ANAMIZED/OpenGOS",
     "source": "github"
   },
   "version": "0.4.0",
-  "websiteUrl": "https://github.com/ANAMIZED/OpenGOS"
+  "websiteUrl": "https://github.com/ANAMIZED/OpenGOS",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "registryBaseUrl": "https://pypi.org",
+      "identifier": "opengos",
+      "version": "0.4.0",
+      "runtimeHint": "uvx",
+      "transport": { "type": "stdio" },
+      "environmentVariables": []
+    }
+  ]
 }
