@@ -48,6 +48,12 @@ class ProfileSteward:
     def list_profiles(self) -> list[ProjectProfile]:
         return list(self._profiles.values())
 
+    def delete(self, profile_id: str) -> bool:
+        if profile_id in self._profiles:
+            del self._profiles[profile_id]
+            return True
+        return False
+
     def from_text(
         self,
         profile_id: str,
@@ -96,14 +102,37 @@ def get_steward() -> ProfileSteward:
     return _steward
 
 
+def _slug(name: str) -> str:
+    return name.lower().replace(" ", "-")
+
+
 def upsert(name: str, pitch: str = "", tags: list[str] | None = None) -> dict[str, Any]:
     """MCP-facing profile upsert helper."""
     steward = get_steward()
-    profile_id = name.lower().replace(" ", "-")
     profile = steward.from_text(
-        profile_id=profile_id,
+        profile_id=_slug(name),
         name=name,
         description=pitch or name,
         focus_areas=tags or ["open-source"],
     )
     return profile.model_dump()
+
+
+def get_profile(name: str) -> dict[str, Any]:
+    steward = get_steward()
+    profile = steward.get(_slug(name)) or steward.get(name)
+    if profile is None:
+        return {"error": f"profile not found: {name}"}
+    return profile.model_dump()
+
+
+def list_profiles() -> list[dict[str, Any]]:
+    return [p.model_dump() for p in get_steward().list_profiles()]
+
+
+def delete_profile(name: str) -> dict[str, Any]:
+    steward = get_steward()
+    for key in (_slug(name), name):
+        if steward.delete(key):
+            return {"status": "deleted", "id": key}
+    return {"error": f"profile not found: {name}"}
