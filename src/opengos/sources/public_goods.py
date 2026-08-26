@@ -155,3 +155,15 @@ def list_catalog() -> list[dict[str, Any]]:
     """Return serializable public-goods catalog for MCP tools."""
     client = PublicGoodsFundingClient()
     return [o.model_dump() for o in client.list_all()]
+
+
+def get_item(item_id: str) -> dict[str, Any] | None:
+    """Lookup one catalog entry by id or title substring."""
+    needle = (item_id or "").strip().lower()
+    if not needle:
+        return None
+    for item in list_catalog():
+        title = str(item.get("title") or "").lower()
+        if item.get("id") == item_id or needle in title or needle == str(item.get("id") or "").lower():
+            return item
+    return None
