@@ -10,17 +10,15 @@
 
 **Autonomous agentic MCP server for grants discovery, ranking, drafting, and public-goods funding.**
 
-### First dollar
+### Support the work
 
-Prefer these before a Pro seat. Same SKUs on Stripe (human) and x402 (agent).
+OpenGOS is funded by donations and sponsorships only. There is no Pro seat, consulting hour, or pay-per-use search/draft SKU.
 
-| Unit | Stripe | x402 |
-|------|--------|------|
-| **Advanced Search $0.40** | [Buy](https://buy.stripe.com/7sY8wQ5EW3iZ5xb5Re43S06) | `GET /v1/search` on [x402-cloudflare-starter](https://github.com/ANAMIZED/x402-cloudflare-starter) |
-| **Proposal Draft $2.50** | [Buy](https://buy.stripe.com/9B69AUd7o7zf2kZ2F243S03) | `GET /v1/draft` |
-| **Public Goods $25** | [Donate](https://donate.stripe.com/00w5kE3wOg5L8Jn2F243S00) | USDC below |
-
-Seats and support: **[OpenGOS Pro — $49/mo](https://buy.stripe.com/7sY8wQ5EWf1H3p3bby43S01)** · **[Kernel Support $99](https://buy.stripe.com/bJecN63wObPv6Bf7Zm43S02)** · **[Consulting Hour $199](https://buy.stripe.com/dRmaEYgjA9Hnf7LdjG43S0b)**
+| Option | Amount | Link |
+|--------|--------|------|
+| **Public Goods Support** | $25 | [Donate](https://donate.stripe.com/00w5kE3wOg5L8Jn2F243S00) |
+| **Monthly Sponsor** | $25/mo | [Sponsor](https://donate.stripe.com/dRm28s4AS5r75xb1AY43S0c) |
+| **Kernel Support** | $99 | [Donate](https://buy.stripe.com/bJecN63wObPv6Bf7Zm43S02) |
 
 Demo: [Interactive shell](https://htmlpreview.github.io/?https://github.com/ANAMIZED/OpenGOS/blob/main/opengos.html)
 
@@ -31,7 +29,7 @@ Demo: [Interactive shell](https://htmlpreview.github.io/?https://github.com/ANAM
 | **Base / Ethereum** | `0xD3d0E9eDAe3Ac7bb199a8EAA761BdA423b878438` |
 | **Solana** | `ETQwWf19axArsY493UfC6bxe2BmEzmzvCb58PPnC38A` |
 
-*Related:* [rui](https://github.com/ANAMIZED/rui) · [LRSI](https://github.com/ANAMIZED/LRSI) · [server-os](https://github.com/ANAMIZED/server-os) · [openmesha](https://github.com/ANAMIZED/openmesha) · [YodMCP](https://github.com/ANAMIZED/YodMCP) · [desk](https://github.com/ANAMIZED/desk)
+*Related:* [RUI](https://github.com/ANAMIZED/Recursive-UltraIntelligence-RUI) · [LRSI](https://github.com/ANAMIZED/LRSI) · [Server-OS](https://github.com/ANAMIZED/Server-OS) · [OpenMesha](https://github.com/ANAMIZED/OpenMesha) · [YodMCP](https://github.com/ANAMIZED/YodMCP) · [desk](https://github.com/ANAMIZED/desk)
 
 ## FOUNDRY mapping
 
@@ -42,9 +40,8 @@ FOUNDRY separates untrusted proposal generation from host-owned verification and
 | Agents propose | discoverer → ranker → drafter (`skills/multi-agent-workflow/`) |
 | Host verifies | human / kernel review before a proposal is sent |
 | Established facts | ranked grant matches + draft artifacts, not self-attested win reports |
-| Token budget | Search $0.40 and Draft $2.50 meter the expensive steps |
 
-Durable memory for those facts lives in [YodMCP](https://github.com/ANAMIZED/YodMCP). Promotion through kernels is fail-closed ([LRSI](https://github.com/ANAMIZED/LRSI), [server-os](https://github.com/ANAMIZED/server-os), [rui](https://github.com/ANAMIZED/rui)). Host owns the evaluator; agents propose.
+Durable memory for those facts lives in [YodMCP](https://github.com/ANAMIZED/YodMCP). Promotion through kernels is fail-closed ([LRSI](https://github.com/ANAMIZED/LRSI), [Server-OS](https://github.com/ANAMIZED/Server-OS), [RUI](https://github.com/ANAMIZED/Recursive-UltraIntelligence-RUI)). Host owns the evaluator; agents propose.
 
 One-page note: [`docs/FOUNDRY.md`](docs/FOUNDRY.md).
 
